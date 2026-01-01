@@ -1,0 +1,442 @@
+/* =========================================
+   VARIABLES & GLOBAL
+   ========================================= */
+:root {
+    --primary-blue: #0f2d5c;    /* Le bleu foncé de ton header */
+    --primary-gold: #fbbf24;    /* Le jaune des boutons */
+    --light-bg: #f3f4f6;        /* Gris très clair du fond de page */
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+}
+
+body {
+    background-color: var(--light-bg);
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--text-dark);
+}
+
+.dashboard-wrapper {
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+/* =========================================
+   HEADER PRINCIPAL
+   ========================================= */
+.dashboard-header {
+    background-color: var(--primary-blue);
+    color: white;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+}
+
+.avatar-circle {
+    width: 56px;
+    height: 56px;
+    background: white;
+    color: var(--primary-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.dashboard-header h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.subtitle {
+    opacity: 0.9;
+    font-size: 0.9rem;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* =========================================
+   CARTES GÉNÉRALES
+   ========================================= */
+.card-custom {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    overflow: hidden;
+    margin-bottom: 24px;
+}
+
+.card-body {
+    padding: 24px;
+}
+
+/* --- EN-TÊTE DE CARTE BLEU --- */
+.card-header-blue {
+    background-color: var(--primary-blue);
+    color: white;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-header-blue h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.ref-text {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.badge-gold {
+    background-color: var(--primary-gold);
+    color: #111;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+/* =========================================
+   SECTION DOCUMENTS ET RESSOURCES
+   ========================================= */
+
+/* --- Les Onglets (Tabs) --- */
+.tabs-container {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    border-bottom: none;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.tab-btn.active {
+    background: white;
+    color: var(--text-dark);
+    font-weight: 600;
+    border-color: var(--border-color);
+    margin-bottom: -1px; /* Pour masquer la ligne du bas */
+    border-bottom: 1px solid white;
+}
+
+.tab-btn:hover:not(.active) {
+    color: var(--text-dark);
+    background: #f9fafb;
+}
+
+/* --- Liste des Items --- */
+.resource-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.resource-item {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.resource-item:hover {
+    border-color: #d1d5db;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* --- Icônes carrées --- */
+.resource-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+.resource-icon.blue { background-color: #0f2d5c; color: white; }
+.resource-icon.gray { background-color: #e5e7eb; color: #9ca3af; }
+
+/* --- Bouton Télécharger Jaune --- */
+.btn-download-yellow {
+    background-color: var(--primary-gold);
+    color: #111;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.btn-download-yellow:hover {
+    background-color: #f59e0b;
+}
+
+
+.badge-soon {
+    background-color: #f3f4f6;
+    color: #9ca3af;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+
+.badge-pill {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #4b5563;
+    display: inline-block;
+}
+
+/* =========================================
+   SIDEBAR (Droite)
+   ========================================= */
+.sidebar-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0;
+}
+
+.sidebar-header-dark {
+    background-color: #0b2144;
+    color: white;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+/* Boutons Actions Rapides */
+.btn-action {
+    background: white;
+    border: 1px solid var(--border-color);
+    padding: 10px 15px;
+    border-radius: 6px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-dark);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    width: 100%;
+}
+.btn-action:hover {
+    border-color: var(--primary-blue);
+    color: var(--primary-blue);
+    background-color: #f8fafc;
+}
+
+/* Liste Documents (Sidebar) */
+.doc-item {
+    padding: 12px 0;
+}
+.badge-pill.gray {
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+}
+
+/* Aide */
+.help-box {
+    background: #fffbeb;
+    border: 1px solid #fef3c7;
+    padding: 20px;
+    border-radius: 8px;
+}
+.help-link {
+    color: var(--primary-blue);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+/* =========================================
+   ANIMATIONS & LOADING
+   ========================================= */
+.loading-container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e5e7eb;
+    border-top: 3px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+.delay-2 { animation-delay: 0.2s; }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+
+/* --- SECTION FORMATEUR (Nouveau) --- */
+.trainer-box {
+    background-color: #f8fafc; /* Gris très clair */
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.trainer-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #e5e7eb; /* Rond gris */
+    color: #6b7280;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.trainer-label { font-size: 0.8rem; color: #9ca3af; margin-bottom: 2px; }
+.trainer-name { font-weight: 700; color: var(--text-dark); margin: 0; font-size: 1rem; }
+.trainer-role { font-size: 0.85rem; color: var(--primary-blue); font-weight: 500; }
+.trainer-email { font-size: 0.85rem; color: #6b7280; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+
+/* --- BARRE DE PROGRESSION (Nouveau) --- */
+.progress-section { margin-top: 24px; padding-top: 20px; border-top: 1px solid #f3f4f6; }
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.progress-track {
+    width: 100%;
+    height: 10px;
+    background-color: #e5e7eb;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-blue); /* Remplissage en bleu */
+    width: 0%; /* Par défaut à 0 */
+    border-radius: 5px;
+    transition: width 1s ease-in-out;
+}
+
+.progress-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* =========================================
+   ANIMATIONS MODERNES & DYNAMIQUES
+   ========================================= */
+
+/* 1. La Cascade (Slide Up + Fade In) */
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(30px); /* Part de plus bas */
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-enter {
+    opacity: 0; /* Invisible au départ */
+    animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* "Cubic-bezier" pour un effet très fluide et naturel */
+}
+
+/* Délais pour l'effet de cascade */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+
+/* 2. Micro-interactions au Survol (Hover) */
+.card-custom {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-custom:hover {
+    transform: translateY(-5px); /* La carte monte légèrement */
+    box-shadow: 0 10px 20px rgba(15, 45, 92, 0.1); /* L'ombre grandit */
+}
+
+.resource-item {
+    transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.resource-item:hover {
+    transform: scale(1.01); /* Grossit à peine */
+    border-color: var(--primary-blue);
+    background-color: #f8fafc;
+}
+
+/* 3. Boutons et Onglets */
+.btn-action, .tab-btn, .btn-download-yellow {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-action:active, .btn-download-yellow:active {
+    transform: scale(0.95); /* Effet de clic enfoncé */
+}
+
+/* 4. Barre de progression dynamique */
+.progress-fill {
+    width: 0%; /* Part de 0 */
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); /* Se remplit lentement */
+}
