@@ -48,7 +48,11 @@ public class DashboardController {
 
             for (Inscription insc : mesInscriptions) {
                 // On cherche la session correspondante à l'inscription
-                Optional<SessionFormation> sessionOpt = sessionRepository.findById(insc.getSessionId());
+                String sessionId = insc.getSessionId();
+                if (sessionId == null) {
+                    continue; // Ignorer les inscriptions sans sessionId
+                }
+                Optional<SessionFormation> sessionOpt = sessionRepository.findById(sessionId);
                 
                 if (sessionOpt.isPresent()) {
                     SessionFormation session = sessionOpt.get();

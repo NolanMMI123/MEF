@@ -4,6 +4,7 @@ import com.monespaceformation.backend.model.SessionFormation;
 import com.monespaceformation.backend.repository.SessionRepository; // Assurez-vous que ce fichier existe
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public class SessionController {
     // 👇 2. AJOUTEZ CECI : C'est ce qui manque pour la page Détails !
     // Ça permet de trouver une formation précise grâce à son ID
     @GetMapping("/{id}")
-    public ResponseEntity<SessionFormation> getSessionById(@PathVariable String id) {
+    public ResponseEntity<SessionFormation> getSessionById(@PathVariable @NonNull String id) {
         // On cherche dans la base de données
         Optional<SessionFormation> session = sessionRepository.findById(id);
 
