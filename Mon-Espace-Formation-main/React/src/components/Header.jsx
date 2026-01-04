@@ -3,17 +3,20 @@ import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { theme } from '../utils/theme';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 // J'ajoute juste des icônes pour le mode connecté (optionnel, tu peux les enlever)
-import { LogOut, User } from 'lucide-react'; 
+import { LogOut, User, Shield } from 'lucide-react'; 
 
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Vérifie si l'utilisateur est connecté à chaque changement de page
+    // Vérifie si l'utilisateur est connecté et son rôle à chaque changement de page
     useEffect(() => {
         const userEmail = localStorage.getItem('userEmail');
+        const role = localStorage.getItem('userRole');
         setIsLoggedIn(!!userEmail); // Devient "true" si l'email existe, "false" sinon
+        setUserRole(role); // Stocke le rôle de l'utilisateur
     }, [location]);
 
     const handleLogout = () => {
@@ -47,8 +50,19 @@ const Header = () => {
 
                         {/* --- ZONE INTELLIGENTE --- */}
                         {isLoggedIn ? (
-                            // CAS CONNECTÉ : On affiche "Mon Espace" et "Déconnexion"
+                            // CAS CONNECTÉ : On affiche "Mon Espace", "Accéder à l'Admin" (si admin), et "Déconnexion"
                             <div className="d-flex gap-2">
+                                {/* Bouton Admin - visible uniquement pour les admins */}
+                                {userRole === 'ROLE_ADMIN' && (
+                                    <Button
+                                        as={Link}
+                                        to="/admin"
+                                        className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center gap-2"
+                                        style={{ backgroundColor: '#10b981', color: 'white' }} // Vert pour distinguer
+                                    >
+                                        <Shield size={16} /> Admin
+                                    </Button>
+                                )}
                                 <Button
                                     as={Link}
                                     to="/dashboard"
