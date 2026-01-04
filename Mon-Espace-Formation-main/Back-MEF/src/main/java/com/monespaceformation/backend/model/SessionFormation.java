@@ -2,80 +2,72 @@ package com.monespaceformation.backend.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "training")
+// 1. On pointe vers la collection où tu as mis tes données ("trainings")
+@Document(collection = "trainings")
 public class SessionFormation {
 
     @Id
     private String id;
 
-    private String title;
-    private String reference;
-    private String desc;
+    // 2. On ajoute les champs qui existent dans ta base et que React attend
+    private String title;       // Le titre de la formation
+    
+    // Si dans Mongo c'est "desc" ou "description", on essaye de mapper
+    private String desc;        
+    
+    private Double price;       // Le prix (Double pour gérer les centimes ou entiers)
+    
+    // Mapping pour gérer "location" (Mongo) vers "lieu" (Ton code actuel)
+    @Field("location") 
+    private String lieu;
+    
+    // Mapping pour "duration" (Mongo) vers "time" (React)
+    @Field("duration")
+    private String time; 
 
-    private String startDate;
-    private String endDate;
-
-    private String duration;
-    private String time;
-
-    private Integer price;
-
-    private String category;
-    private String level;
-    private String location;
-
-    private String trainerName;
-
-    private Integer placesTotales;
-
-    // optionnel (ton front check "formation.sessions || formation.placesTotales")
-    private Integer sessions;
+    private String level;       // Niveau
+    private String category;    // Catégorie
+    
+    private String dates;       // Gardé pour compatibilité
+    private int placesTotales;  
+    private int placesReservees;
 
     public SessionFormation() {}
 
+    // Getters et Setters (Indispensables pour que Spring remplisse l'objet)
+    
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getReference() { return reference; }
-    public void setReference(String reference) { this.reference = reference; }
-
     public String getDesc() { return desc; }
     public void setDesc(String desc) { this.desc = desc; }
 
-    public String getStartDate() { return startDate; }
-    public void setStartDate(String startDate) { this.startDate = startDate; }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
 
-    public String getEndDate() { return endDate; }
-    public void setEndDate(String endDate) { this.endDate = endDate; }
-
-    public String getDuration() { return duration; }
-    public void setDuration(String duration) { this.duration = duration; }
+    public String getLieu() { return lieu; }
+    public void setLieu(String lieu) { this.lieu = lieu; }
 
     public String getTime() { return time; }
     public void setTime(String time) { this.time = time; }
 
-    public Integer getPrice() { return price; }
-    public void setPrice(Integer price) { this.price = price; }
+    public String getLevel() { return level; }
+    public void setLevel(String level) { this.level = level; }
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
 
-    public String getLevel() { return level; }
-    public void setLevel(String level) { this.level = level; }
+    public String getDates() { return dates; }
+    public void setDates(String dates) { this.dates = dates; }
 
-    public String getLocation() { return location; }
-    public void setLocation(String location) { this.location = location; }
+    public int getPlacesTotales() { return placesTotales; }
+    public void setPlacesTotales(int placesTotales) { this.placesTotales = placesTotales; }
 
-    public String getTrainerName() { return trainerName; }
-    public void setTrainerName(String trainerName) { this.trainerName = trainerName; }
-
-    public Integer getPlacesTotales() { return placesTotales; }
-    public void setPlacesTotales(Integer placesTotales) { this.placesTotales = placesTotales; }
-
-    public Integer getSessions() { return sessions; }
-    public void setSessions(Integer sessions) { this.sessions = sessions; }
+    public int getPlacesReservees() { return placesReservees; }
+    public void setPlacesReservees(int placesReservees) { this.placesReservees = placesReservees; }
 }

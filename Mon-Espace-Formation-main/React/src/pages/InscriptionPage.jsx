@@ -46,7 +46,7 @@ const InscriptionPage = () => {
     }));
 
     setIsLoading(true);
-    fetch('/api/sessions')
+    fetch('http://localhost:8080/api/sessions')
         .then(res => res.json())
         .then(data => {
             setSessions(data);
@@ -96,7 +96,7 @@ const InscriptionPage = () => {
     };
 
     try {
-        const response = await fetch('/api/inscriptions', {
+        const response = await fetch('http://localhost:8080/api/inscriptions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dataToSend),

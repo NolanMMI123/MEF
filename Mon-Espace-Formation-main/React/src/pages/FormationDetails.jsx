@@ -21,7 +21,7 @@ const FormationDetails = () => {
         const fetchDetails = async () => {
             try {
                 // 1. Tenter de récupérer depuis l'API Back-end
-                const response = await fetch(`/api/sessions/${id}`);
+                const response = await fetch(`http://localhost:8080/api/sessions/${id}`);
                 
                 if (response.ok) {
                     const data = await response.json();
