@@ -26,6 +26,18 @@ public class AuthController {
         if (userRepository.existsByEmail(user.getEmail())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Erreur : Cet email est déjà utilisé !"));
         }
+        
+        // Définir le rôle par défaut
+        if (user.getRole() == null || user.getRole().isEmpty()) {
+            // Si l'email est admin@txlforma.fr, définir le rôle ADMIN
+            if ("admin@txlforma.fr".equalsIgnoreCase(user.getEmail())) {
+                user.setRole("ADMIN");
+            } else {
+                // Sinon, rôle USER par défaut
+                user.setRole("USER");
+            }
+        }
+        
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return ResponseEntity.ok(Map.of("message", "Inscription réussie !"));

@@ -1,6 +1,6 @@
 package com.monespaceformation.backend.dto;
 
-public class AdminDashboardSummary {
+public class AdminDashboardSummarySimple {
     
     private int totalInscriptions;
     private double totalRevenue;
@@ -9,11 +9,11 @@ public class AdminDashboardSummary {
     private double revenueTrend;
 
     // Constructeur vide
-    public AdminDashboardSummary() {}
+    public AdminDashboardSummarySimple() {}
 
     // Constructeur avec arguments
-    public AdminDashboardSummary(int totalInscriptions, double totalRevenue, int upcomingSessions, 
-                                 double registrationTrend, double revenueTrend) {
+    public AdminDashboardSummarySimple(int totalInscriptions, double totalRevenue, int upcomingSessions, 
+                                      double registrationTrend, double revenueTrend) {
         this.totalInscriptions = totalInscriptions;
         this.totalRevenue = totalRevenue;
         this.upcomingSessions = upcomingSessions;
@@ -62,3 +62,4 @@ public class AdminDashboardSummary {
         this.revenueTrend = revenueTrend;
     }
 }
+

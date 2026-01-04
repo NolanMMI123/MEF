@@ -15,7 +15,7 @@ public class User {
     private String password;
     private String entreprise;
     private String poste;
-
+    private String role;
     // Constructeur vide
     public User() {}
 
@@ -49,4 +49,7 @@ public class User {
 
     public String getPoste() { return poste; }
     public void setPoste(String poste) { this.poste = poste; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }

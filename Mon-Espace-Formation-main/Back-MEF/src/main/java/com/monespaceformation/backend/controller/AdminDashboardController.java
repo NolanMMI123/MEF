@@ -11,7 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -62,6 +68,39 @@ public class AdminDashboardController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Object>> getSummary() {
+        try {
+            // Récupérer toutes les inscriptions depuis MongoDB
+            List<Inscription> allInscriptions = inscriptionRepository.findAll();
+            
+            // Calculer le montant total des inscriptions
+            double montantTotal = allInscriptions.stream()
+                    .filter(i -> i.getAmount() != null)
+                    .mapToDouble(Inscription::getAmount)
+                    .sum();
+            
+            // Calculer le nombre de participants (nombre d'inscriptions)
+            int nombreParticipants = allInscriptions.size();
+            
+            // Créer la réponse
+            Map<String, Object> summary = new HashMap<>();
+            summary.put("montantTotal", montantTotal);
+            summary.put("montantTotalFormatted", String.format("%.2f €", montantTotal));
+            summary.put("nombreParticipants", nombreParticipants);
+            summary.put("nombreInscriptions", nombreParticipants); // Alias pour clarté
+            
+            return ResponseEntity.ok(summary);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Erreur lors du calcul du résumé");
+            error.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(error);
         }
     }
 
