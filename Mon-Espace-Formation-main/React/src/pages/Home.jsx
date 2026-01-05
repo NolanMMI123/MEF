@@ -6,7 +6,7 @@ import { FaBullseye, FaLightbulb, FaUsers, FaPhoneAlt, FaEnvelope } from 'react-
 import { theme } from '../utils/theme';
 import { formationsData, featuresData } from '../utils/data';
 
-// --- Configuration des Animations ---
+
 const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
@@ -25,7 +25,7 @@ const Home = () => {
     return (
         <div style={{ fontFamily: theme.fonts.main, overflowX: 'hidden' }}>
 
-            {/* 1. HERO SECTION */}
+            
             <section style={{ backgroundColor: theme.colors.primary, color: 'white', padding: '100px 0 80px 0' }}>
                 <Container>
                     <Row className="align-items-center">
@@ -41,9 +41,15 @@ const Home = () => {
                                     TXLFORMA vous propose une large gamme de formations dans les nouvelles technologies. Boostez votre carrière avec nos experts.
                                 </motion.p>
                                 <motion.div variants={fadeInUp} className="d-flex flex-wrap gap-3">
-                                    <Button size="lg" className="fw-bold rounded-1 px-4 border-0 text-white" style={{ backgroundColor: theme.colors.accent }}>
-                                        Découvrir les formations →
-                                    </Button>
+                                   <Button 
+    as={Link}              
+    to="/formations"        
+    size="lg" 
+    className="fw-bold rounded-1 px-4 border-0 text-white text-decoration-none" 
+    style={{ backgroundColor: theme.colors.accent }}
+>
+    Découvrir les formations →
+</Button>
                                     <Link to="/salle" style={{ textDecoration: "none" }}>
                                         <Button variant="light" size="lg" className="fw-bold rounded-1 px-4" style={{ color: theme.colors.primary }}>
                                             Découvrir nos salles
@@ -51,7 +57,7 @@ const Home = () => {
                                     </Link>
                                 </motion.div>
 
-                                {/* Stats Row */}
+                                
                                 <motion.div variants={fadeInUp} className="d-flex gap-5 mt-5 pt-4 border-top border-white border-opacity-25">
                                     {[
                                         { num: "7+", label: "Catégories de formations" },
@@ -67,7 +73,7 @@ const Home = () => {
                             </motion.div>
                         </Col>
 
-                        {/* Illustration Droite (Simulation Glassmorphism) */}
+                        
                         <Col lg={6} className="d-none d-lg-block">
                             <motion.div
                                 initial={{ x: 100, opacity: 0 }}
@@ -96,7 +102,7 @@ const Home = () => {
                 </Container>
             </section>
 
-            {/* 2. FORMATIONS SECTION */}
+           
             <section className="py-5" style={{ backgroundColor: theme.colors.bgLight }} id="formations">
                 <Container className="py-5">
                     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-5">
@@ -141,7 +147,7 @@ const Home = () => {
                 </Container>
             </section>
 
-            {/* 3. A PROPOS & FONDATEURS */}
+            
             <section className="py-5 bg-white" id="apropos">
                 <Container className="py-4">
                     <div className="text-center mb-5">
@@ -193,7 +199,7 @@ const Home = () => {
                 </Container>
             </section>
 
-            {/* 4. POURQUOI CHOISIR */}
+            
             <section className="py-5" style={{ backgroundColor: theme.colors.primary, color: 'white' }}>
                 <Container className="py-4">
                     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-5">
@@ -224,7 +230,7 @@ const Home = () => {
                 </Container>
             </section>
 
-            {/* 5. CTA BOTTOM */}
+            
             <section className="py-5 text-center" style={{ backgroundColor: theme.colors.accent }}>
                 <Container className="py-3">
                     <h2 className="fw-bold text-dark mb-3">Prêt à développer vos compétences ?</h2>

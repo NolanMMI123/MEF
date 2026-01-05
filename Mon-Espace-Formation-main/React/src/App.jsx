@@ -32,8 +32,8 @@ import AdminRoute from './components/AdminRoute';
 function App() {
   const location = useLocation();
   
-  // On cache le header/footer sur les pages de connexion/inscription compte
-  const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription-compte';
+  // CORRECTION ICI : Remplacement de '/inscription-compte' par '/inscription'
+  const isAuthPage = location.pathname === '/connexion' || location.pathname === '/inscription';
   
   // On cache le header/footer sur toutes les pages d'administration
   const isAdminPage = location.pathname.startsWith('/admin');

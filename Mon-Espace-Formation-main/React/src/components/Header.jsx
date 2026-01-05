@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, Container, Nav, Button } from 'react-bootstrap';
 import { theme } from '../utils/theme';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-// J'ajoute juste des icônes pour le mode connecté (optionnel, tu peux les enlever)
-import { LogOut, User, Shield } from 'lucide-react'; 
+import { LogOut, User, Shield } from 'lucide-react';
 
 const Header = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -30,11 +29,17 @@ const Header = () => {
     return (
         <Navbar expand="lg" className="py-3 bg-white sticky-top shadow-sm">
             <Container>
-                {/* LOGO (IDENTIQUE À TON CODE) */}
+                {/* LOGO MODIFIÉ ICI */}
                 <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
-                    <div style={{ color: theme.colors.primary, fontSize: '26px', fontWeight: '800', marginRight: '12px', letterSpacing: '-1px' }}>
-                        <span style={{ color: theme.colors.accent }}>M</span>EF
-                    </div>
+                    
+                    {/* 👇 C'est ici que j'ai mis ton image du dossier public 👇 */}
+                    <img 
+                        src="/vignette_MEF.png" 
+                        alt="Logo MEF" 
+                        height="50" 
+                        className="d-inline-block align-top me-2" 
+                    />
+
                     <span style={{ fontSize: '14px', color: theme.colors.textGrey, borderLeft: '1px solid #dee2e6', paddingLeft: '12px', lineHeight: '1.2' }}>
                         Mon Espace<br />Formation
                     </span>
@@ -50,7 +55,7 @@ const Header = () => {
 
                         {/* --- ZONE INTELLIGENTE --- */}
                         {isLoggedIn ? (
-                            // CAS CONNECTÉ : On affiche "Mon Espace", "Accéder à l'Admin" (si admin), et "Déconnexion"
+                            // CAS CONNECTÉ
                             <div className="d-flex gap-2">
                                 {/* Bouton Admin - visible uniquement pour les admins */}
                                 {userRole === 'ROLE_ADMIN' && (
@@ -58,7 +63,7 @@ const Header = () => {
                                         as={Link}
                                         to="/admin"
                                         className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center gap-2"
-                                        style={{ backgroundColor: '#10b981', color: 'white' }} // Vert pour distinguer
+                                        style={{ backgroundColor: '#10b981', color: 'white' }}
                                     >
                                         <Shield size={16} /> Admin
                                     </Button>
@@ -74,13 +79,13 @@ const Header = () => {
                                 <Button
                                     onClick={handleLogout}
                                     className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center"
-                                    style={{ backgroundColor: '#f3f4f6', color: '#dc3545' }} // Gris clair texte rouge
+                                    style={{ backgroundColor: '#f3f4f6', color: '#dc3545' }}
                                 >
                                     <LogOut size={16} />
                                 </Button>
                             </div>
                         ) : (
-                            // CAS NON CONNECTÉ : Ton bouton original EXACT
+                            // CAS NON CONNECTÉ
                             <Button
                                 as={Link}
                                 to="/connexion"

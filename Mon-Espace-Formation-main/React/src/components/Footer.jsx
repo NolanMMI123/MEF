@@ -2,6 +2,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { theme } from '../utils/theme';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -9,7 +10,16 @@ const Footer = () => {
             <Container>
                 <Row className="gy-4 mb-5">
                     <Col lg={4}>
-                        <h4 className="fw-bold mb-4" style={{ letterSpacing: '-1px' }}>MEF</h4>
+                        <div className="mb-4">
+                            {/* Logo qui ramène à l'accueil et remonte en haut */}
+                            <Link to="/" onClick={() => window.scrollTo(0, 0)}>
+                                <img 
+                                    src="/logo-blanc.svg" 
+                                    alt="Logo MEF Blanc" 
+                                    height="40" 
+                                />
+                            </Link>
+                        </div>
                         <p className="opacity-75 lh-lg">
                             TXLFORMA - Votre partenaire pour des formations de qualité dans le numérique et les nouvelles technologies.
                         </p>
@@ -17,9 +27,21 @@ const Footer = () => {
                     <Col lg={2}>
                         <h6 className="fw-bold text-warning mb-4">Liens Rapides</h6>
                         <ul className="list-unstyled opacity-75 d-flex flex-column gap-2">
-                            <li><a href="#" className="text-white text-decoration-none">Nous contacter</a></li>
-                            <li><a href="#" className="text-white text-decoration-none">Nos Formations</a></li>
-                            <li><a href="#" className="text-white text-decoration-none">A Propos</a></li>
+                            <li>
+                                <Link to="/contact" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                    Nous contacter
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/formations" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                    Nos Formations
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/about" className="text-white text-decoration-none" onClick={() => window.scrollTo(0, 0)}>
+                                    A Propos
+                                </Link>
+                            </li>
                         </ul>
                     </Col>
                     <Col lg={3}>
