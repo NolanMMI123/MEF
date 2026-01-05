@@ -5,6 +5,8 @@ import {
     User, BookOpen, CreditCard, ShieldCheck 
 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+// AJOUT : Import d'EmailJS
+import emailjs from '@emailjs/browser';
 
 const InscriptionPage = () => {
   const { id } = useParams(); 
@@ -110,6 +112,38 @@ const InscriptionPage = () => {
             
             // 2. On génère un numéro de commande bidon
             const refCommande = "INS-" + Date.now().toString().slice(-8);
+
+            // --- DEBUT BLOC EMAILJS ---
+            // On prépare les données pour le template "Order Confirmation"
+            const templateParams = {
+                order_id: refCommande,
+                email: formData.email, // L'email du destinataire (celui du formulaire)
+                // Tableau orders pour la boucle du template
+                orders: [
+                    {
+                        name: "Formation Complète", // Ou sessionDetails.title si dispo
+                        price: "2490€",
+                        units: "1"
+                    }
+                ],
+                // On met à 0 car ce n'est pas un produit physique
+                "cost.shipping": "0€",
+                "cost.tax": "0€"
+            };
+
+            // Envoi de l'email (en arrière-plan, sans bloquer l'utilisateur)
+            emailjs.send(
+                'service_aindt9t',       // VOTRE SERVICE ID
+                'template_4ontamh',      // VOTRE TEMPLATE ID
+                templateParams,
+                'i7HdabS5N1pWaFesk'      // VOTRE PUBLIC KEY
+            )
+            .then((result) => {
+                console.log('Email envoyé avec succès !', result.text);
+            }, (error) => {
+                console.error('Erreur lors de l\'envoi de l\'email :', error.text);
+            });
+            // --- FIN BLOC EMAILJS ---
 
             // 3. On redirige vers la page de succès avec les données
             navigate('/succes-inscription', {
