@@ -121,7 +121,7 @@ const AdminLayout = ({ children }) => {
         <div className="admin-header-content">
           <div className="admin-header-left">
             <div className="admin-logo">
-              <div className="admin-logo-icon"> <img src="/public/adminlogo.png" alt="Logo" className="admin-logo-icon" /> </div>
+              <div className="admin-logo-icon"> <img src="/adminlogo.png" alt="Logo" className="admin-logo-icon" /> </div>
               <div>
                 <h1 className="admin-title">TXLFORMA - Gestion Administration</h1>
                 <p className="admin-subtitle">Tableau de bord de Gestion</p>

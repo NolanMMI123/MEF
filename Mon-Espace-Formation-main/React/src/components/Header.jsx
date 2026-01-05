@@ -57,8 +57,8 @@ const Header = () => {
                         {isLoggedIn ? (
                             // CAS CONNECTÉ
                             <div className="d-flex gap-2">
-                                {/* Bouton Admin - visible uniquement pour les admins */}
-                                {userRole === 'ROLE_ADMIN' && (
+                                {/* Bouton Admin - visible uniquement pour les admins (remplace "Mon Espace") */}
+                                {userRole === 'ROLE_ADMIN' ? (
                                     <Button
                                         as={Link}
                                         to="/admin"
@@ -67,15 +67,17 @@ const Header = () => {
                                     >
                                         <Shield size={16} /> Admin
                                     </Button>
+                                ) : (
+                                    // Bouton "Mon Espace" - visible uniquement pour les utilisateurs standards
+                                    <Button
+                                        as={Link}
+                                        to="/dashboard"
+                                        className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center gap-2"
+                                        style={{ backgroundColor: theme.colors.primary, color: 'white' }}
+                                    >
+                                        <User size={16} /> Mon Espace
+                                    </Button>
                                 )}
-                                <Button
-                                    as={Link}
-                                    to="/dashboard"
-                                    className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center gap-2"
-                                    style={{ backgroundColor: theme.colors.primary, color: 'white' }}
-                                >
-                                    <User size={16} /> Mon Espace
-                                </Button>
                                 <Button
                                     onClick={handleLogout}
                                     className="fw-bold px-3 py-2 border-0 rounded-1 d-flex align-items-center"
