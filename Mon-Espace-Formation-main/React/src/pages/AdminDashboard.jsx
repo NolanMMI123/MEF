@@ -3,8 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { 
   Users, Euro, Calendar, FileText, Download, 
-  Plus, UserPlus, ArrowRight, TrendingUp
+  Plus, UserPlus, ArrowRight, TrendingUp, X
 } from 'lucide-react';
+import Toast from '../components/Toast';
 import './AdminDashboard.css';
 
 /**
@@ -17,6 +18,18 @@ const AdminDashboard = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showTrainingModal, setShowTrainingModal] = useState(false);
+  const [toast, setToast] = useState(null);
+  const [trainingFormData, setTrainingFormData] = useState({
+    title: '',
+    duration: '',
+    location: '',
+    trainerName: '',
+    trainerRole: '',
+    trainerEmail: '',
+    status: 'A Venir'
+  });
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,6 +67,82 @@ const AdminDashboard = () => {
 
     fetchData();
   }, []);
+
+  // Gérer l'ouverture du modal de formation
+  const handleOpenTrainingModal = () => {
+    setTrainingFormData({
+      title: '',
+      duration: '',
+      location: '',
+      trainerName: '',
+      trainerRole: '',
+      trainerEmail: '',
+      status: 'A Venir'
+    });
+    setShowTrainingModal(true);
+  };
+
+  // Gérer la fermeture du modal
+  const handleCloseTrainingModal = () => {
+    setShowTrainingModal(false);
+    setTrainingFormData({
+      title: '',
+      duration: '',
+      location: '',
+      trainerName: '',
+      trainerRole: '',
+      trainerEmail: '',
+      status: 'A Venir'
+    });
+  };
+
+  // Gérer les changements dans le formulaire
+  const handleTrainingInputChange = (e) => {
+    const { name, value } = e.target;
+    setTrainingFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Soumettre le formulaire de formation
+  const handleTrainingSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!trainingFormData.title || !trainingFormData.duration || !trainingFormData.location) {
+      setToast({ message: 'Veuillez remplir tous les champs obligatoires', type: 'error' });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('http://localhost:8080/api/trainings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...trainingFormData,
+          startDate: '',
+          endDate: '',
+          sessionRef: ''
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de la formation');
+      }
+
+      setToast({ message: 'Formation créée avec succès !', type: 'success' });
+      handleCloseTrainingModal();
+    } catch (err) {
+      console.error('Erreur:', err);
+      setToast({ message: err.message || 'Erreur lors de la création de la formation', type: 'error' });
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   // Calculer le CA total (somme des montants des inscriptions)
   const calculateRevenue = () => {
@@ -284,7 +373,7 @@ const AdminDashboard = () => {
                   <Calendar size={20} />
                   <span>Créer une session</span>
                 </button>
-                <button className="admin-action-btn">
+                <button className="admin-action-btn" onClick={handleOpenTrainingModal}>
                   <FileText size={20} />
                   <span>Nouvelle formation</span>
                 </button>
@@ -354,6 +443,129 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal de création de formation */}
+      {showTrainingModal && (
+        <div className="modal-overlay" onClick={handleCloseTrainingModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">Nouvelle formation</h3>
+              <button className="modal-close" onClick={handleCloseTrainingModal}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleTrainingSubmit} className="modal-form">
+              <div className="form-group">
+                <label className="form-label">Titre de la formation *</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={trainingFormData.title}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: Développement Front-End avec React et TypeScript"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Durée *</label>
+                <input
+                  type="text"
+                  name="duration"
+                  value={trainingFormData.duration}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: 5 Jours ou 30 heures"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Lieu *</label>
+                <input
+                  type="text"
+                  name="location"
+                  value={trainingFormData.location}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: Paris / Distanciel"
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Nom du formateur</label>
+                <input
+                  type="text"
+                  name="trainerName"
+                  value={trainingFormData.trainerName}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: Jean-Pierre Martin"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Rôle/Expertise du formateur</label>
+                <input
+                  type="text"
+                  name="trainerRole"
+                  value={trainingFormData.trainerRole}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="Ex: Expert React & TypeScript"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Email du formateur</label>
+                <input
+                  type="email"
+                  name="trainerEmail"
+                  value={trainingFormData.trainerEmail}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                  placeholder="exemple@email.com"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Statut</label>
+                <select
+                  name="status"
+                  value={trainingFormData.status}
+                  onChange={handleTrainingInputChange}
+                  className="form-input"
+                >
+                  <option value="A Venir">A Venir</option>
+                  <option value="En cours">En cours</option>
+                  <option value="Terminé">Terminé</option>
+                </select>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={handleCloseTrainingModal}>
+                  Annuler
+                </button>
+                <button type="submit" className="btn-submit" disabled={submitting}>
+                  {submitting ? 'Création...' : 'Créer la formation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast notification */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
     </AdminLayout>
   );
 };

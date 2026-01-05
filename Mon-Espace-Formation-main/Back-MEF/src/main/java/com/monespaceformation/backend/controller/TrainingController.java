@@ -33,5 +33,36 @@ public class TrainingController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    /**
+     * Créer une nouvelle formation
+     * POST /api/trainings
+     */
+    @PostMapping
+    public ResponseEntity<Training> createTraining(@RequestBody Training training) {
+        try {
+            // Générer une référence automatique si non fournie
+            if (training.getReference() == null || training.getReference().isEmpty()) {
+                String prefix = "FORM-";
+                String category = "GEN";
+                if (training.getTitle() != null && training.getTitle().toUpperCase().contains("REACT")) {
+                    category = "DEV";
+                }
+                String refNumber = String.format("%03d", trainingRepository.count() + 1);
+                training.setReference(prefix + category + "-" + refNumber);
+            }
+
+            // Initialiser le statut si non défini
+            if (training.getStatus() == null || training.getStatus().isEmpty()) {
+                training.setStatus("A Venir");
+            }
+
+            Training saved = trainingRepository.save(training);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
 
