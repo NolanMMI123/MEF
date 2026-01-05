@@ -38,4 +38,21 @@ public class SessionController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // 3. CRÉER UNE NOUVELLE SESSION (POST)
+    @PostMapping
+    public ResponseEntity<SessionFormation> createSession(@RequestBody SessionFormation session) {
+        try {
+            // Initialiser les places réservées à 0 si non défini
+            if (session.getPlacesReservees() < 0) {
+                session.setPlacesReservees(0);
+            }
+            
+            SessionFormation saved = sessionRepository.save(session);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

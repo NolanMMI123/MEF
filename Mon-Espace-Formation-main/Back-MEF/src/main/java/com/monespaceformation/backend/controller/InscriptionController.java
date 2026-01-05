@@ -109,4 +109,44 @@ public class InscriptionController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    // 4. METTRE À JOUR LE STATUT D'UNE INSCRIPTION (PUT)
+    @PutMapping("/{id}")
+    public ResponseEntity<Inscription> updateInscription(@PathVariable String id, @RequestBody Inscription inscriptionUpdate) {
+        try {
+            Optional<Inscription> inscriptionOpt = inscriptionRepository.findById(id);
+            if (inscriptionOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Inscription inscription = inscriptionOpt.get();
+            
+            // Mettre à jour uniquement le statut si fourni
+            if (inscriptionUpdate.getStatus() != null) {
+                inscription.setStatus(inscriptionUpdate.getStatus());
+            }
+
+            Inscription saved = inscriptionRepository.save(inscription);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    // 5. SUPPRIMER UNE INSCRIPTION (DELETE)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteInscription(@PathVariable String id) {
+        try {
+            if (!inscriptionRepository.existsById(id)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            inscriptionRepository.deleteById(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
