@@ -101,7 +101,6 @@ Si votre backend est hébergé sur un autre port ou domaine, modifiez les URLs d
 ## Structure du Projet
 
 ```
-```text
 React/
 ├── public/                # Modèles 3D (.glb) et logos
 ├── src/
