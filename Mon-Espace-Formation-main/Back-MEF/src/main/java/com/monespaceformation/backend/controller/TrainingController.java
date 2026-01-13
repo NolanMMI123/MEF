@@ -92,9 +92,13 @@ public class TrainingController {
     /**
      * Mettre à jour une formation
      * PUT /api/trainings/{id}
+     * Les formateurs ne peuvent modifier que leurs propres formations (vérification via trainerId)
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Training> updateTraining(@PathVariable String id, @RequestBody Training trainingUpdate) {
+    public ResponseEntity<Training> updateTraining(
+            @PathVariable String id, 
+            @RequestBody Training trainingUpdate,
+            @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
@@ -102,6 +106,14 @@ public class TrainingController {
             }
 
             Training training = trainingOpt.get();
+            
+            // Vérification de sécurité : si un trainerId est fourni dans le header, 
+            // vérifier que la formation appartient bien à ce formateur
+            if (trainerIdHeader != null && !trainerIdHeader.isEmpty()) {
+                if (training.getTrainerId() == null || !training.getTrainerId().equals(trainerIdHeader)) {
+                    return ResponseEntity.status(403).build(); // Forbidden
+                }
+            }
             
             // Mettre à jour les champs
             if (trainingUpdate.getTitle() != null) {
@@ -150,9 +162,12 @@ public class TrainingController {
     /**
      * Supprimer une formation
      * DELETE /api/trainings/{id}
+     * Les formateurs ne peuvent supprimer que leurs propres formations (vérification via trainerId)
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTraining(@PathVariable String id) {
+    public ResponseEntity<?> deleteTraining(
+            @PathVariable String id,
+            @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
@@ -160,6 +175,14 @@ public class TrainingController {
             }
 
             Training training = trainingOpt.get();
+            
+            // Vérification de sécurité : si un trainerId est fourni dans le header, 
+            // vérifier que la formation appartient bien à ce formateur
+            if (trainerIdHeader != null && !trainerIdHeader.isEmpty()) {
+                if (training.getTrainerId() == null || !training.getTrainerId().equals(trainerIdHeader)) {
+                    return ResponseEntity.status(403).build(); // Forbidden
+                }
+            }
             
             // Vérifier s'il y a des sessions liées à cette formation (par titre)
             List<com.monespaceformation.backend.model.SessionFormation> sessions = sessionRepository.findAll();
@@ -186,7 +209,8 @@ public class TrainingController {
     @PutMapping("/{id}/pedagogical-content")
     public ResponseEntity<Training> updatePedagogicalContent(
             @PathVariable String id, 
-            @RequestBody Training trainingUpdate) {
+            @RequestBody Training trainingUpdate,
+            @RequestHeader(value = "X-Trainer-Id", required = false) String trainerIdHeader) {
         try {
             Optional<Training> trainingOpt = trainingRepository.findById(id);
             if (trainingOpt.isEmpty()) {
@@ -194,6 +218,14 @@ public class TrainingController {
             }
 
             Training training = trainingOpt.get();
+            
+            // Vérification de sécurité : si un trainerId est fourni dans le header, 
+            // vérifier que la formation appartient bien à ce formateur
+            if (trainerIdHeader != null && !trainerIdHeader.isEmpty()) {
+                if (training.getTrainerId() == null || !training.getTrainerId().equals(trainerIdHeader)) {
+                    return ResponseEntity.status(403).build(); // Forbidden
+                }
+            }
             
             // Mettre à jour uniquement le contenu pédagogique
             if (trainingUpdate.getObjectifs() != null) {

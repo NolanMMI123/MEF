@@ -147,18 +147,28 @@ const ManageTrainers = () => {
         nom: formData.nom,
         prenom: formData.prenom,
         email: formData.email,
-        poste: formData.poste,
-        typeContrat: formData.typeContrat || null,
-        tarif: formData.tarif ? parseFloat(formData.tarif) : null
+        poste: formData.poste
       };
       
+      // Ajouter typeContrat seulement s'il est renseigné
+      if (formData.typeContrat && formData.typeContrat.trim() !== '') {
+        bodyData.typeContrat = formData.typeContrat;
+      }
+      
+      // Ajouter tarif seulement s'il est renseigné et valide
+      if (formData.tarif && formData.tarif !== '' && !isNaN(parseFloat(formData.tarif))) {
+        bodyData.tarif = parseFloat(formData.tarif);
+      }
+      
       // Ajouter le mot de passe seulement s'il est fourni (pour la création ou la modification)
-      if (formData.password) {
+      if (formData.password && formData.password.trim() !== '') {
         bodyData.password = formData.password;
       } else if (!editingTrainerId) {
         // Mot de passe par défaut seulement pour la création
         bodyData.password = 'trainer123';
       }
+
+      console.log('Envoi de la requête:', { url, method, bodyData });
 
       const response = await fetch(url, {
         method: method,
@@ -168,13 +178,23 @@ const ManageTrainers = () => {
         body: JSON.stringify(bodyData)
       });
 
+      const responseText = await response.text();
+      console.log('Réponse du serveur:', response.status, responseText);
+
       if (!response.ok) {
-        if (response.status === 400) {
-          throw new Error('Cet email est déjà utilisé');
-        }
-        throw new Error(editingTrainerId 
+        let errorMessage = editingTrainerId 
           ? 'Erreur lors de la modification du formateur' 
-          : 'Erreur lors de la création du formateur');
+          : 'Erreur lors de la création du formateur';
+        
+        if (response.status === 400) {
+          errorMessage = 'Cet email est déjà utilisé ou données invalides';
+        } else if (response.status === 404) {
+          errorMessage = 'Formateur non trouvé';
+        } else if (response.status === 500) {
+          errorMessage = 'Erreur serveur. Vérifiez les logs du backend.';
+        }
+        
+        throw new Error(errorMessage);
       }
 
       setToast({ 

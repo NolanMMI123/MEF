@@ -195,14 +195,23 @@ public class DashboardController {
                 formationsWithInscrits.add(trainingWithInscrits);
             }
 
-            // 4. Créer les statistiques
+            // 4. Calculer le revenu total
+            // Le revenu = tarif du formateur × nombre d'heures de cours prévues
+            double revenuTotal = 0.0;
+            if (trainer.getTarif() != null && trainer.getTarif() > 0) {
+                // Multiplier le tarif horaire par le nombre d'heures
+                revenuTotal = trainer.getTarif() * heuresCoursPrevues;
+            }
+
+            // 5. Créer les statistiques
             TrainerDashboardDTO.Statistics stats = new TrainerDashboardDTO.Statistics(
                 totalEleves,
                 heuresCoursPrevues,
-                formations.size()
+                formations.size(),
+                revenuTotal
             );
 
-            // 5. Créer et renvoyer le DTO
+            // 6. Créer et renvoyer le DTO
             TrainerDashboardDTO dashboard = new TrainerDashboardDTO(trainer, formationsWithInscrits, stats);
             
             return ResponseEntity.ok(dashboard);

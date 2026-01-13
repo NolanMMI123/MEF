@@ -503,3 +503,11 @@
   border-top: 1px solid #e0e0e0;
 }
 
+.trainer-form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  font-size: 14px;
+}
+

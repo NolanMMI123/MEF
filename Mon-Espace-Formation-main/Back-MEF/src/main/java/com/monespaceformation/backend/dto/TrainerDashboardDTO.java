@@ -95,6 +95,7 @@ public class TrainerDashboardDTO {
         private int totalEleves;
         private int heuresCoursPrevues;
         private int nombreFormations;
+        private double revenuTotal; // Revenu total calculé
 
         public Statistics() {}
 
@@ -102,6 +103,14 @@ public class TrainerDashboardDTO {
             this.totalEleves = totalEleves;
             this.heuresCoursPrevues = heuresCoursPrevues;
             this.nombreFormations = nombreFormations;
+            this.revenuTotal = 0.0;
+        }
+
+        public Statistics(int totalEleves, int heuresCoursPrevues, int nombreFormations, double revenuTotal) {
+            this.totalEleves = totalEleves;
+            this.heuresCoursPrevues = heuresCoursPrevues;
+            this.nombreFormations = nombreFormations;
+            this.revenuTotal = revenuTotal;
         }
 
         public int getTotalEleves() { return totalEleves; }
@@ -112,6 +121,9 @@ public class TrainerDashboardDTO {
 
         public int getNombreFormations() { return nombreFormations; }
         public void setNombreFormations(int nombreFormations) { this.nombreFormations = nombreFormations; }
+
+        public double getRevenuTotal() { return revenuTotal; }
+        public void setRevenuTotal(double revenuTotal) { this.revenuTotal = revenuTotal; }
     }
 }
 
