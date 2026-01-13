@@ -69,7 +69,7 @@ const AdminAttestations = () => {
         month: '2-digit', 
         year: 'numeric' 
       });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };
@@ -81,7 +81,6 @@ const AdminAttestations = () => {
       
       // Couleurs
       const primaryColor = [15, 45, 92]; // Bleu marine
-      const lightGray = [240, 240, 240];
       
       // En-tête avec fond bleu
       doc.setFillColor(...primaryColor);

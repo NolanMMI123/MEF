@@ -70,7 +70,7 @@ export default function Salle({ on, laptopToPlay }) {
   const { scene, animations } = useGLTF("/salle.glb");
   const { actions } = useAnimations(animations, group);
 
-  const [switchLocked, setSwitchLocked] = useState(false);
+  const [, setSwitchLocked] = useState(false);
 
   useEffect(() => {
     RectAreaLightUniformsLib.init();
@@ -109,6 +109,7 @@ export default function Salle({ on, laptopToPlay }) {
     if (!a) return;
 
     a.setLoop(THREE.LoopOnce, 1);
+    // eslint-disable-next-line react-hooks/immutability
     a.clampWhenFinished = true;
 
     setSwitchLocked(true);
@@ -240,6 +241,7 @@ export default function Salle({ on, laptopToPlay }) {
     }
 
     a.setLoop(THREE.LoopOnce, 1);
+    // eslint-disable-next-line react-hooks/immutability
     a.clampWhenFinished = true;
 
     // robust

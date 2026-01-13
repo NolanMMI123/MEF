@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout';
 import { 
   Save, Shield, CreditCard, Euro, ArrowLeft, 
@@ -12,7 +12,6 @@ import './AdminSettings.css';
  * Permet de configurer Stripe, les politiques de paiement et de remboursement
  */
 const AdminSettings = () => {
-  const navigate = useNavigate();
   const [settings, setSettings] = useState({
     stripePublicKey: '',
     stripeSecretKey: '',

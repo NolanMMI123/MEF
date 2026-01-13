@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaUserPlus } from 'react-icons/fa';
 import { theme } from '../utils/theme';
@@ -47,10 +46,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
                     }}></div>
 
                     {/* Contenu centré */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6 }}
+                    <div
                         className="text-center d-flex flex-column align-items-center z-2 p-5"
                     >
                         {/* Icône Utilisateur Jaune */}
@@ -69,7 +65,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
                             <span style={{ width: 10, height: 10, backgroundColor: 'white', borderRadius: '50%', opacity: 0.5 }}></span>
                             <span style={{ width: 10, height: 10, backgroundColor: 'white', borderRadius: '50%', opacity: 0.5 }}></span>
                         </div>
-                    </motion.div>
+                    </div>
                 </Col>
 
                 {/* --- COLONNE DROITE (Blanche - Formulaire - 7/12 ème) --- */}
@@ -82,10 +78,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
                         </Link>
                     </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
+                    <div
                         className="w-100"
                         style={{ maxWidth: '480px' }} // Limite la largeur du formulaire pour qu'il reste beau
                     >
@@ -96,7 +89,7 @@ const AuthLayout = ({ children, title, subtitle }) => {
 
                         {children}
 
-                    </motion.div>
+                    </div>
                 </Col>
             </Row>
         </div>

@@ -22,13 +22,13 @@ export default function Salle3D() {
   const [flashOn, setFlashOn] = useState(false);
 
   // ✅ un état par laptop (clé = actionName)
-  const [laptopForwardMap, setLaptopForwardMap] = useState({});
+  const [, setLaptopForwardMap] = useState({});
   const [laptopToPlay, setLaptopToPlay] = useState(null); // { actionName, forward }
 
   // HUD
   const [canInteract, setCanInteract] = useState(false);
   const [label, setLabel] = useState("");
-  const [kind, setKind] = useState(null);
+  const [, setKind] = useState(null);
 
   const onChange = (v, l, k, actionName) => {
     setCanInteract(v);

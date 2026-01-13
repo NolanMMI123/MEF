@@ -37,10 +37,26 @@ const AdminLayout = ({ children }) => {
 
   // Polling toutes les 60 secondes
   useEffect(() => {
-    fetchNotifications(); // Charger immédiatement
+    // Fonction pour charger les notifications
+    const loadNotifications = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/notifications');
+        if (response.ok) {
+          const data = await response.json();
+          setNotifications(data);
+          // Compter les non lues
+          const unread = data.filter(n => !n.isRead).length;
+          setUnreadCount(unread);
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement des notifications:', err);
+      }
+    };
+
+    loadNotifications(); // Charger immédiatement
     
     const interval = setInterval(() => {
-      fetchNotifications();
+      loadNotifications();
     }, 60000); // 60 secondes
 
     return () => clearInterval(interval);
@@ -88,7 +104,7 @@ const AdminLayout = ({ children }) => {
       if (diffHours < 24) return `Il y a ${diffHours}h`;
       if (diffDays < 7) return `Il y a ${diffDays}j`;
       return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-    } catch (e) {
+    } catch {
       return 'N/A';
     }
   };

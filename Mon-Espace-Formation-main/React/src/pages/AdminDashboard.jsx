@@ -233,7 +233,7 @@ const AdminDashboard = () => {
         month: 'short', 
         year: 'numeric' 
       });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };

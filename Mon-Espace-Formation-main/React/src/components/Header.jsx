@@ -12,10 +12,13 @@ const Header = () => {
 
     // Vérifie si l'utilisateur est connecté et son rôle à chaque changement de page
     useEffect(() => {
-        const userEmail = localStorage.getItem('userEmail');
-        const role = localStorage.getItem('userRole');
-        setIsLoggedIn(!!userEmail); // Devient "true" si l'email existe, "false" sinon
-        setUserRole(role); // Stocke le rôle de l'utilisateur
+        const checkUserStatus = () => {
+            const userEmail = localStorage.getItem('userEmail');
+            const role = localStorage.getItem('userRole');
+            setIsLoggedIn(!!userEmail); // Devient "true" si l'email existe, "false" sinon
+            setUserRole(role); // Stocke le rôle de l'utilisateur
+        };
+        checkUserStatus();
     }, [location]);
 
     const handleLogout = () => {

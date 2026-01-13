@@ -10,6 +10,7 @@ export default function InteractionRaycaster({ onChange, maxDistance = 3 }) {
 
   useFrame(() => {
     raycaster.setFromCamera(center, camera);
+    // eslint-disable-next-line react-hooks/immutability
     raycaster.far = maxDistance;
 
     const hits = raycaster.intersectObjects(scene.children, true);

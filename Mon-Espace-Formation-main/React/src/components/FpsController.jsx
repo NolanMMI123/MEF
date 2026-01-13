@@ -27,6 +27,7 @@ export default function FpsController({
   const up = useMemo(() => new THREE.Vector3(0, 1, 0), []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/immutability
     camera.position.y = eyeHeight;
 
     const onKeyDown = (e) => {
@@ -115,6 +116,7 @@ export default function FpsController({
     dir.set(0, 0, 0);
 
     camera.getWorldDirection(forward);
+    // eslint-disable-next-line react-hooks/immutability
     forward.y = 0;
     if (forward.lengthSq() > 0) forward.normalize();
 
@@ -131,6 +133,7 @@ export default function FpsController({
     }
 
     // hauteur verrouillée
+    // eslint-disable-next-line react-hooks/immutability
     camera.position.y = eyeHeight;
   });
 

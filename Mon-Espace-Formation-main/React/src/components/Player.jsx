@@ -110,6 +110,7 @@ export default function Player({ eyeHeight = 1.5, flashOn, setFlashOn }) {
 
     // direction au sol
     camera.getWorldDirection(forward);
+    // eslint-disable-next-line react-hooks/immutability
     forward.y = 0;
     if (forward.lengthSq() > 0) forward.normalize();
 

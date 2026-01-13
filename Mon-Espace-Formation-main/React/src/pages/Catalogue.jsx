@@ -1,21 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Form, InputGroup, Button, Card, Spinner } from 'react-bootstrap';
-import { motion } from 'framer-motion';
 import { FaSearch, FaClock, FaUser, FaArrowRight, FaFilter } from 'react-icons/fa';
 import { theme } from '../utils/theme';
 import { catalogueData } from '../utils/data';
-
-// animations
-const fadeInUp = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-};
-
-const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
-};
 
 const Catalogue = () => {
     // --- ETAT POUR LES DONNÉES ---
@@ -140,14 +128,12 @@ const Catalogue = () => {
                         <Spinner animation="border" variant="primary" />
                     </div>
                 ) : (
-                    <motion.div variants={staggerContainer} initial="hidden" animate="visible">
+                    <div>
                         <Row className="g-4 align-items-stretch">
                             {/* BOUCLE SUR LES FORMATIONS FILTRÉES */}
                             {formations.map((formation) => (
                                 <Col lg={4} md={6} key={formation.id}>
-                                    <motion.div
-                                        variants={fadeInUp}
-                                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                                    <div
                                         className="h-100"
                                     >
                                         <Card className="h-100 border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
@@ -197,15 +183,15 @@ const Catalogue = () => {
                                                 className="w-100 rounded-0 py-2 d-flex justify-content-center align-items-center gap-2 fw-medium"
                                                 style={{ backgroundColor: theme.colors.primary, border: 'none' }}
                                             >
-                                                Voir les détails <FaArrowRight size={12} />
-                                            </Button>
-                                        </Card>
-                                    </motion.div>
-                                </Col>
-                            ))}
-                        </Row>
-                    </motion.div>
-                )}
+                                            Voir les détails <FaArrowRight size={12} />
+                                        </Button>
+                                    </Card>
+                                </div>
+                            </Col>
+                        ))}
+                    </Row>
+                </div>
+            )}
             </Container>
         </div>
     );

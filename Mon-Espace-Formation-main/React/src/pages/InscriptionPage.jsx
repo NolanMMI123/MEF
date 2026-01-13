@@ -16,9 +16,27 @@ const InscriptionPage = () => {
   const [step, setStep] = useState(1);
   const [selectedSession, setSelectedSession] = useState(null);
   const [sessions, setSessions] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [formData, setFormData] = useState({
+  // Initialiser formData avec les données du localStorage si disponibles
+  const getInitialFormData = () => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const currentUser = JSON.parse(storedUser);
+      return {
+        typeInscription: 'individuel',
+        nom: currentUser.nom || '',
+        prenom: currentUser.prenom || '',
+        email: currentUser.email || '',
+        telephone: '',
+        adresse: '',
+        cp: '',
+        ville: '',
+        entreprise: '', 
+        poste: ''
+      };
+    }
+    return {
       typeInscription: 'individuel',
       nom: '',
       prenom: '',
@@ -29,7 +47,10 @@ const InscriptionPage = () => {
       ville: '',
       entreprise: '', 
       poste: ''
-  });
+    };
+  };
+
+  const [formData, setFormData] = useState(getInitialFormData);
 
   useEffect(() => {
     // 1. Vérif connexion
@@ -39,25 +60,20 @@ const InscriptionPage = () => {
         return;
     }
 
-    const currentUser = JSON.parse(storedUser);
-    setFormData(prev => ({
-        ...prev,
-        nom: currentUser.nom || '',
-        prenom: currentUser.prenom || '',
-        email: currentUser.email || ''
-    }));
-
-    setIsLoading(true);
-    fetch('http://localhost:8080/api/sessions')
-        .then(res => res.json())
-        .then(data => {
-            setSessions(data);
-            setIsLoading(false);
-        })
-        .catch(err => {
-            console.error("Erreur chargement sessions", err);
-            setIsLoading(false);
-        });
+    // Charger les sessions
+    const loadSessions = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/sessions');
+        const data = await res.json();
+        setSessions(data);
+      } catch (err) {
+        console.error("Erreur chargement sessions", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadSessions();
   }, [navigate]);
 
   const handleInputChange = (e) => {

@@ -12,7 +12,7 @@ import './ManageSessions.css';
 const ManageSessions = () => {
   const [sessions, setSessions] = useState([]);
   const [trainings, setTrainings] = useState([]);
-  const [trainers, setTrainers] = useState([]);
+  const [, setTrainers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);

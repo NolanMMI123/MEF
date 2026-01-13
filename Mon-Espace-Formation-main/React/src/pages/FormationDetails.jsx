@@ -6,7 +6,6 @@ import {
     FaCalendarAlt, FaMapMarkerAlt, FaChalkboardTeacher,
     FaExclamationTriangle, FaArrowLeft
 } from 'react-icons/fa';
-import { motion } from 'framer-motion';
 import { theme } from '../utils/theme';
 import { catalogueData } from '../utils/data';
 
@@ -45,12 +44,6 @@ const FormationDetails = () => {
         fetchDetails();
     }, [id]);
 
-    // Animation variants
-    const fadeIn = {
-        hidden: { opacity: 0, y: 20 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
-    };
-
     if (loading) {
         return (
             <Container className="text-center py-5" style={{ minHeight: '100vh' }}>
@@ -80,7 +73,7 @@ const FormationDetails = () => {
                 <Container>
                     <Row className="align-items-center">
                         <Col lg={8}>
-                            <motion.div initial="hidden" animate="visible" variants={fadeIn}>
+                            <div>
                                 <div className="mb-3">
                                      {/* CORRECTION ICI : /catalogue -> /formations */}
                                      <Link to="/formations" className="text-white-50 text-decoration-none small mb-3 d-inline-block">
@@ -109,13 +102,10 @@ const FormationDetails = () => {
                                         <span>{course.price} TTC</span>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         </Col>
                         <Col lg={4} className="d-none d-lg-block">
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: 0.2 }}
+                            <div
                                 className="bg-white rounded-3 shadow-lg p-1"
                                 style={{ height: '250px' }}
                             >
@@ -123,7 +113,7 @@ const FormationDetails = () => {
                                 <div className="w-100 h-100 bg-light rounded-2 d-flex align-items-center justify-content-center text-muted">
                                     <span>Aperçu de la formation</span>
                                 </div>
-                            </motion.div>
+                            </div>
                         </Col>
                     </Row>
                 </Container>

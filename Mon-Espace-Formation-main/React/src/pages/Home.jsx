@@ -1,25 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Container, Row, Col, Button, Card } from 'react-bootstrap';
-import { motion } from 'framer-motion';
 import { FaBullseye, FaLightbulb, FaUsers, FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import { theme } from '../utils/theme';
 import { formationsData, featuresData } from '../utils/data';
 
-
-const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
-
-const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
-};
-
-const cardHover = {
-    hover: { y: -8, transition: { type: "spring", stiffness: 300 } }
-};
 
 const Home = () => {
     return (
@@ -30,17 +15,17 @@ const Home = () => {
                 <Container>
                     <Row className="align-items-center">
                         <Col lg={6} className="mb-5 mb-lg-0">
-                            <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-                                <motion.span variants={fadeInUp} className="badge mb-3 px-3 py-2 rounded-pill text-dark fw-bold" style={{ backgroundColor: theme.colors.accent }}>
+                            <div>
+                                <span className="badge mb-3 px-3 py-2 rounded-pill text-dark fw-bold" style={{ backgroundColor: theme.colors.accent }}>
                                     Formations Professionnelles
-                                </motion.span>
-                                <motion.h1 variants={fadeInUp} className="display-4 fw-bold mb-4" style={{ lineHeight: 1.15 }}>
+                                </span>
+                                <h1 className="display-4 fw-bold mb-4" style={{ lineHeight: 1.15 }}>
                                     Développez vos compétences dans le <span style={{ color: theme.colors.accent }}>numérique</span>
-                                </motion.h1>
-                                <motion.p variants={fadeInUp} className="lead mb-5 opacity-75" style={{ fontSize: '1.1rem' }}>
+                                </h1>
+                                <p className="lead mb-5 opacity-75" style={{ fontSize: '1.1rem' }}>
                                     TXLFORMA vous propose une large gamme de formations dans les nouvelles technologies. Boostez votre carrière avec nos experts.
-                                </motion.p>
-                                <motion.div variants={fadeInUp} className="d-flex flex-wrap gap-3">
+                                </p>
+                                <div className="d-flex flex-wrap gap-3">
                                    <Button 
     as={Link}              
     to="/formations"        
@@ -55,10 +40,10 @@ const Home = () => {
                                             Découvrir nos salles
                                         </Button>
                                     </Link>
-                                </motion.div>
+                                </div>
 
                                 
-                                <motion.div variants={fadeInUp} className="d-flex gap-5 mt-5 pt-4 border-top border-white border-opacity-25">
+                                <div className="d-flex gap-5 mt-5 pt-4 border-top border-white border-opacity-25">
                                     {[
                                         { num: "7+", label: "Catégories de formations" },
                                         { num: "100+", label: "Étudiants formés" },
@@ -69,16 +54,13 @@ const Home = () => {
                                             <small className="opacity-75" style={{ fontSize: '0.8rem', lineHeight: '1.2' }}>{stat.label}</small>
                                         </div>
                                     ))}
-                                </motion.div>
-                            </motion.div>
+                                </div>
+                            </div>
                         </Col>
 
                         
                         <Col lg={6} className="d-none d-lg-block">
-                            <motion.div
-                                initial={{ x: 100, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ duration: 0.8, delay: 0.2 }}
+                            <div
                                 style={{
                                     background: 'rgba(255,255,255,0.08)',
                                     borderRadius: '24px',
@@ -96,7 +78,7 @@ const Home = () => {
                                         </div>
                                     </div>
                                 ))}
-                            </motion.div>
+                            </div>
                         </Col>
                     </Row>
                 </Container>
@@ -105,17 +87,17 @@ const Home = () => {
            
             <section className="py-5" style={{ backgroundColor: theme.colors.bgLight }} id="formations">
                 <Container className="py-5">
-                    <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-5">
+                    <div className="text-center mb-5">
                         <h2 className="display-6 fw-bold" style={{ color: theme.colors.primary }}>Nos Formations</h2>
                         <p className="text-muted">Découvrez notre large gamme de formations technologiques</p>
-                    </motion.div>
+                    </div>
 
-                    <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+                    <div>
                         <Row className="g-4">
                             {formationsData.map((f) => (
                                 <Col md={6} lg={4} key={f.id}>
-                                    <motion.div variants={fadeInUp} whileHover="hover">
-                                        <motion.div variants={cardHover}>
+                                    <div>
+                                        <div>
                                             <Card className={`h-100 border-0 shadow-sm ${f.highlight ? 'border-2 border-warning' : ''}`} style={{ borderRadius: '16px', overflow: 'hidden' }}>
                                                 <Card.Body className="p-4 d-flex flex-column align-items-start">
                                                     <div className="d-flex align-items-center justify-content-center mb-4 text-white rounded-3 shadow-sm"
@@ -127,8 +109,8 @@ const Home = () => {
                                                     <span className="fw-bold small text-decoration-underline" style={{ color: theme.colors.primary, cursor: 'pointer' }}>En savoir plus</span>
                                                 </Card.Body>
                                             </Card>
-                                        </motion.div>
-                                    </motion.div>
+                                        </div>
+                                    </div>
                                 </Col>
                             ))}
                         </Row>
@@ -143,7 +125,7 @@ const Home = () => {
                                 Voir toutes les formations
                             </Button>
                         </div>
-                    </motion.div>
+                    </div>
                 </Container>
             </section>
 
@@ -161,11 +143,8 @@ const Home = () => {
                                 { t: "Notre Vision", i: <FaLightbulb />, d: "Rendre la formation professionnelle accessible à tous..." },
                                 { t: "Notre Équipe", i: <FaUsers />, d: "Un effectif de 10 personnes réparties sur différents services..." }
                             ].map((item, i) => (
-                                <motion.div
+                                <div
                                     key={i}
-                                    initial={{ opacity: 0, x: -30 }}
-                                    whileInView={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.2 }}
                                     className="d-flex gap-4 mb-4"
                                 >
                                     <div className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
@@ -176,7 +155,7 @@ const Home = () => {
                                         <h4 className="fw-bold h5" style={{ color: theme.colors.primary }}>{item.t}</h4>
                                         <p className="text-muted small mb-0">{item.d}</p>
                                     </div>
-                                </motion.div>
+                                </div>
                             ))}
                         </Col>
                         <Col lg={6}>
@@ -187,11 +166,11 @@ const Home = () => {
                                     { n: "Mme Alice ROMAINVILLE", r: "Co-Fondatrice", d: "Diplômée d'une école de commerce" },
                                     { n: "Mr Lionel PRIGENT", r: "Co-Fondateur", d: "Master MEEF (Métiers de l'enseignement)" }
                                 ].map((p, i) => (
-                                    <motion.div key={i} whileHover={{ x: 5 }} className="p-3 rounded-3 bg-light" style={{ borderLeft: `4px solid ${theme.colors.accent}` }}>
+                                    <div key={i} className="p-3 rounded-3 bg-light" style={{ borderLeft: `4px solid ${theme.colors.accent}` }}>
                                         <h5 className="fw-bold mb-1" style={{ color: theme.colors.primary }}>{p.n}</h5>
                                         <small className="text-warning fw-bold d-block mb-1">{p.r}</small>
                                         <p className="small text-muted mb-0">{p.d}</p>
-                                    </motion.div>
+                                    </div>
                                 ))}
                             </div>
                         </Col>
@@ -202,18 +181,15 @@ const Home = () => {
             
             <section className="py-5" style={{ backgroundColor: theme.colors.primary, color: 'white' }}>
                 <Container className="py-4">
-                    <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="text-center mb-5">
+                    <div className="text-center mb-5">
                         <h2 className="fw-bold display-6">Pourquoi choisir Mon Espace Formation ?</h2>
                         <p className="opacity-75">Nous mettons tout en œuvre pour garantir votre réussite professionnelle</p>
-                    </motion.div>
+                    </div>
 
                     <Row className="g-4">
                         {featuresData.map((f, i) => (
                             <Col md={6} lg={4} key={i}>
-                                <motion.div
-                                    initial={{ opacity: 0, y: 30 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1 }}
+                                <div
                                     className="text-center p-4 rounded-3 h-100 d-flex flex-column align-items-center justify-content-center"
                                     style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)' }}
                                 >
@@ -223,7 +199,7 @@ const Home = () => {
                                     </div>
                                     <h5 className="fw-bold">{f.title}</h5>
                                     <p className="small opacity-75 mb-0">{f.desc}</p>
-                                </motion.div>
+                                </div>
                             </Col>
                         ))}
                     </Row>

@@ -92,7 +92,7 @@ const ManageInscriptions = () => {
         month: 'short', 
         year: 'numeric' 
       });
-    } catch (e) {
+    } catch {
       return dateString;
     }
   };

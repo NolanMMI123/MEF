@@ -1,18 +1,7 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Container, Row, Col, Form, Button, Card } from 'react-bootstrap';
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaClock, FaUsers, FaPaperPlane } from 'react-icons/fa';
 import { theme } from '../utils/theme';
-
-const fadeInUp = {
-    hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-};
-
-const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1, transition: { staggerChildren: 0.15 } }
-};
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -44,21 +33,20 @@ const Contact = () => {
             <section style={{ backgroundColor: theme.colors.primary, color: 'white', padding: '100px 0 80px 0' }}>
                 <Container>
                     <div className="align-items-center justify-content-center text-center">
-                        <motion.div initial="hidden" animate="visible" variants={staggerContainer}>
-                            <motion.span 
-                                variants={fadeInUp} 
+                        <div>
+                            <span 
                                 className="badge mb-3 px-3 py-2 rounded-pill text-dark fw-bold" 
                                 style={{ backgroundColor: theme.colors.accent }}
                             >
                                 Contact & Support
-                            </motion.span>
-                            <motion.h1 variants={fadeInUp} className="display-4 fw-bold mb-4" style={{ lineHeight: 1.15 }}>
+                            </span>
+                            <h1 className="display-4 fw-bold mb-4" style={{ lineHeight: 1.15 }}>
                                 Contactez-<span style={{ color: theme.colors.accent }}>nous</span>
-                            </motion.h1>
-                            <motion.p variants={fadeInUp} className="lead mb-5 opacity-75" style={{ fontSize: '1.1rem' }}>
+                            </h1>
+                            <p className="lead mb-5 opacity-75" style={{ fontSize: '1.1rem' }}>
                                 Une question sur nos formations ? Notre équipe est à votre écoute pour vous accompagner dans votre projet de formation.
-                            </motion.p>
-                        </motion.div>
+                            </p>
+                        </div>
                     </div>
                 </Container>
             </section>
@@ -69,18 +57,13 @@ const Contact = () => {
                     <Row className="g-5">
                         {/* PARTIE GAUCHE - Coordonnées */}
                         <Col lg={5}>
-                            <motion.div 
-                                initial="hidden" 
-                                whileInView="visible" 
-                                viewport={{ once: true }}
-                                variants={staggerContainer}
-                            >
-                                <motion.h2 variants={fadeInUp} className="fw-bold mb-4">
+                            <div>
+                                <h2 className="fw-bold mb-4">
                                     Nos Coordonnées
-                                </motion.h2>
+                                </h2>
 
                                 {/* Adresse */}
-                                <motion.div variants={fadeInUp} className="mb-4">
+                                <div className="mb-4">
                                     <Card className="border-0 shadow-sm">
                                         <Card.Body className="p-4">
                                             <div className="d-flex align-items-start gap-3">
@@ -108,10 +91,10 @@ const Contact = () => {
                                             </div>
                                         </Card.Body>
                                     </Card>
-                                </motion.div>
+                                </div>
 
                                 {/* Téléphone */}
-                                <motion.div variants={fadeInUp} className="mb-4">
+                                <div className="mb-4">
                                     <Card className="border-0 shadow-sm">
                                         <Card.Body className="p-4">
                                             <div className="d-flex align-items-start gap-3">
@@ -136,10 +119,10 @@ const Contact = () => {
                                             </div>
                                         </Card.Body>
                                     </Card>
-                                </motion.div>
+                                </div>
 
                                 {/* Email */}
-                                <motion.div variants={fadeInUp} className="mb-4">
+                                <div className="mb-4">
                                     <Card className="border-0 shadow-sm">
                                         <Card.Body className="p-4">
                                             <div className="d-flex align-items-start gap-3">
@@ -164,10 +147,10 @@ const Contact = () => {
                                             </div>
                                         </Card.Body>
                                     </Card>
-                                </motion.div>
+                                </div>
 
                                 {/* Horaires */}
-                                <motion.div variants={fadeInUp} className="mb-4">
+                                <div className="mb-4">
                                     <Card className="border-0 shadow-sm">
                                         <Card.Body className="p-4">
                                             <div className="d-flex align-items-start gap-3">
@@ -195,10 +178,10 @@ const Contact = () => {
                                             </div>
                                         </Card.Body>
                                     </Card>
-                                </motion.div>
+                                </div>
 
                                 {/* Notre équipe dirigeante */}
-                                <motion.div variants={fadeInUp} className="mb-4">
+                                <div className="mb-4">
                                     <Card className="border-0 shadow-sm" style={{ backgroundColor: theme.colors.primary, color: 'white' }}>
                                         <Card.Body className="p-4">
                                             <div className="d-flex align-items-start gap-3">
@@ -227,18 +210,13 @@ const Contact = () => {
                                             </div>
                                         </Card.Body>
                                     </Card>
-                                </motion.div>
-                            </motion.div>
+                                </div>
+                            </div>
                         </Col>
 
                         {/* PARTIE DROITE - Formulaire */}
                         <Col lg={7}>
-                            <motion.div 
-                                initial="hidden" 
-                                whileInView="visible" 
-                                viewport={{ once: true }}
-                                variants={fadeInUp}
-                            >
+                            <div>
                                 <Card className="border-0 shadow-sm">
                                     <Card.Body className="p-5">
                                         <h2 className="fw-bold mb-3">Envoyez-nous un message</h2>
@@ -352,11 +330,7 @@ const Contact = () => {
 
                                                 {/* Bouton d'envoi */}
                                                 <Col xs={12}>
-                                                    <motion.div
-                                                        whileHover={{ scale: 1.02 }}
-                                                        whileTap={{ scale: 0.98 }}
-                                                        transition={{ type: "spring", stiffness: 400, damping: 17 }}
-                                                    >
+                                                    <div>
                                                         <Button 
                                                             type="submit" 
                                                             size="lg" 
@@ -377,7 +351,7 @@ const Contact = () => {
                                                         >
                                                             <FaPaperPlane /> Envoyer le message
                                                         </Button>
-                                                    </motion.div>
+                                                    </div>
                                                 </Col>
 
                                                 {/* Légende champs obligatoires */}
@@ -390,7 +364,7 @@ const Contact = () => {
                                         </Form>
                                     </Card.Body>
                                 </Card>
-                            </motion.div>
+                            </div>
                         </Col>
                     </Row>
                 </Container>
@@ -399,23 +373,14 @@ const Contact = () => {
             {/* SECTION LOCALISATION */}
             <section style={{ padding: '80px 0', backgroundColor: 'white' }}>
                 <Container>
-                    <motion.div 
-                        initial="hidden" 
-                        whileInView="visible" 
-                        viewport={{ once: true }}
-                        variants={fadeInUp}
+                    <div
                         className="text-center mb-5"
                     >
                         <h2 className="fw-bold mb-3">Notre Localisation</h2>
                         <p className="text-muted">Retrouvez-nous facilement grâce à notre carte interactive</p>
-                    </motion.div>
+                    </div>
 
-                    <motion.div 
-                        initial="hidden" 
-                        whileInView="visible" 
-                        viewport={{ once: true }}
-                        variants={fadeInUp}
-                    >
+                    <div>
                         <Card className="border-0 shadow-lg overflow-hidden">
                             <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
                                 <iframe
@@ -507,7 +472,7 @@ const Contact = () => {
                                 </Card>
                             </Col>
                         </Row>
-                    </motion.div>
+                    </div>
                 </Container>
             </section>
         </div>
