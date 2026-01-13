@@ -431,10 +431,12 @@ const TrainerDashboard = () => {
 
       console.log('📤 Données envoyées au backend:', JSON.stringify(trainingDataToSend, null, 2));
       console.log('📋 État complet de fullTrainingFormData avant envoi:', {
+        imageUrl: fullTrainingFormData.imageUrl ? (fullTrainingFormData.imageUrl.substring(0, 50) + '...') : 'vide',
         objectifs: fullTrainingFormData.objectifs,
         programme: fullTrainingFormData.programme,
         prerequis: fullTrainingFormData.prerequis
       });
+      console.log('🖼️ ImageUrl envoyée:', trainingDataToSend.imageUrl ? (trainingDataToSend.imageUrl.substring(0, 50) + '...') : 'vide');
 
       const url = trainingData?.id 
         ? `http://localhost:8080/api/trainings/${trainingData.id}`
@@ -467,10 +469,12 @@ const TrainerDashboard = () => {
       console.log('✅ Formation sauvegardée avec succès:', savedTraining);
       console.log('📋 Contenu pédagogique sauvegardé:', {
         description: savedTraining.description,
+        imageUrl: savedTraining.imageUrl ? (savedTraining.imageUrl.substring(0, 50) + '...') : 'vide',
         objectifs: savedTraining.objectifs,
         prerequis: savedTraining.prerequis,
         programme: savedTraining.programme
       });
+      console.log('🖼️ ImageUrl sauvegardée:', savedTraining.imageUrl ? (savedTraining.imageUrl.substring(0, 50) + '...') : 'vide');
 
       // Vérifier que les données pédagogiques ont bien été sauvegardées
       if (savedTraining.objectifs && savedTraining.objectifs.length > 0) {

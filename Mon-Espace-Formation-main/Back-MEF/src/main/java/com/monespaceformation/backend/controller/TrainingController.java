@@ -174,6 +174,10 @@ public class TrainingController {
             if (trainingUpdate.getDescription() != null) {
                 training.setDescription(trainingUpdate.getDescription());
             }
+            // Toujours mettre à jour l'image d'aperçu (même si c'est une chaîne vide pour supprimer l'image)
+            String newImageUrl = trainingUpdate.getImageUrl() != null ? trainingUpdate.getImageUrl() : "";
+            training.setImageUrl(newImageUrl);
+            System.out.println("📝 Mise à jour formation - ImageUrl: " + (newImageUrl != null && !newImageUrl.isEmpty() ? newImageUrl.substring(0, Math.min(50, newImageUrl.length())) + "..." : "vide"));
             // Toujours mettre à jour les objectifs (même si c'est une liste vide)
             training.setObjectifs(trainingUpdate.getObjectifs() != null ? trainingUpdate.getObjectifs() : new java.util.ArrayList<>());
             // Toujours mettre à jour les prérequis (même si c'est une liste vide)
