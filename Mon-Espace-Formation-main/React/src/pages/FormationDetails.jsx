@@ -26,6 +26,9 @@ const FormationDetails = () => {
                 if (response.ok) {
                     const data = await response.json();
                     console.log("Détails reçus du Back-end :", data);
+                    console.log("Objectifs:", data.objectifs);
+                    console.log("Prérequis:", data.prerequis);
+                    console.log("Programme:", data.programme);
                     setCourse(data);
                 } else {
                     // Fallback : essayer avec sessions si trainings échoue
@@ -210,10 +213,20 @@ const FormationDetails = () => {
 
                                         {/* Afficher le programme depuis course.programme (String) ou course.program (liste) */}
                                         {course.programme ? (
-                                            <div className="border rounded p-4" style={{ backgroundColor: '#f8f9fa' }}>
-                                                <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}>
-                                                    {course.programme}
-                                                </pre>
+                                            <div className="d-flex flex-column gap-3">
+                                                {/* Si c'est une chaîne, la diviser par lignes */}
+                                                {typeof course.programme === 'string' 
+                                                  ? course.programme.split('\n').filter(line => line.trim() !== '').map((line, idx) => (
+                                                      <div key={idx} className="border-start border-4 ps-4 position-relative" style={{ borderColor: theme.colors.primary }}>
+                                                          <p className="mb-0 text-muted">{line.trim()}</p>
+                                                      </div>
+                                                    ))
+                                                  : course.programme.map((prog, idx) => (
+                                                      <div key={idx} className="border-start border-4 ps-4 position-relative" style={{ borderColor: theme.colors.primary }}>
+                                                          <p className="mb-0 text-muted">{prog}</p>
+                                                      </div>
+                                                    ))
+                                                }
                                             </div>
                                         ) : course.program ? (
                                             <div className="d-flex flex-column gap-4">

@@ -35,12 +35,12 @@ const TrainerDashboard = () => {
     status: 'A Venir',
     description: '',  // Description générale
     objectifs: [],
-    programme: [], // Transformé en liste pour cohérence
+    programme: [], // Liste pour le programme
     prerequis: []
   });
   const [editingObjective, setEditingObjective] = useState('');
-  const [editingPrerequis, setEditingPrerequis] = useState('');
   const [editingProgramme, setEditingProgramme] = useState(''); // Pour le programme
+  const [editingPrerequis, setEditingPrerequis] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState(null);
   const [showSessionModal, setShowSessionModal] = useState(false);
@@ -152,6 +152,13 @@ const TrainerDashboard = () => {
           return '';
         };
 
+        // Convertir le programme String en liste si nécessaire
+        const programmeList = training.programme 
+          ? (typeof training.programme === 'string' 
+              ? training.programme.split('\n').filter(line => line.trim() !== '') 
+              : (Array.isArray(training.programme) ? training.programme : []))
+          : [];
+
         setFullTrainingFormData({
           title: training.title || '',
           duration: training.duration || '',
@@ -162,11 +169,10 @@ const TrainerDashboard = () => {
           status: training.status || 'A Venir',
           description: training.description || '',
           objectifs: training.objectifs || [],
-          // Convertir le programme String en liste si nécessaire
-          programme: training.programme ? (typeof training.programme === 'string' ? training.programme.split('\n').filter(line => line.trim() !== '') : training.programme) : [],
+          programme: programmeList,
           prerequis: training.prerequis || []
         });
-        // Initialiser les champs d'édition
+        // Réinitialiser les champs d'édition
         setEditingProgramme('');
         setShowEditModal(true);
       })
@@ -194,8 +200,8 @@ const TrainerDashboard = () => {
     });
     // Réinitialiser aussi les champs d'édition
     setEditingObjective('');
-    setEditingPrerequis('');
     setEditingProgramme('');
+    setEditingPrerequis('');
     setTrainingData({ trainerId: user.id, trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim(), trainerEmail: user.email });
     setShowCreateModal(true);
   };
@@ -356,7 +362,7 @@ const TrainerDashboard = () => {
         // Description et contenu pédagogique - CRUCIAL : s'assurer que ces champs sont bien inclus
         description: fullTrainingFormData.description || '',
         objectifs: Array.isArray(fullTrainingFormData.objectifs) ? fullTrainingFormData.objectifs : [],
-        // Convertir la liste programme en String (jointure avec \n)
+        // Convertir la liste programme en String (jointure avec \n) pour le backend
         programme: Array.isArray(fullTrainingFormData.programme) 
           ? fullTrainingFormData.programme.join('\n') 
           : (fullTrainingFormData.programme || ''),
@@ -408,12 +414,18 @@ const TrainerDashboard = () => {
       // Vérifier que les données pédagogiques ont bien été sauvegardées
       if (savedTraining.objectifs && savedTraining.objectifs.length > 0) {
         console.log('✅ Objectifs sauvegardés:', savedTraining.objectifs);
+      } else {
+        console.warn('⚠️ Aucun objectif sauvegardé');
       }
       if (savedTraining.prerequis && savedTraining.prerequis.length > 0) {
         console.log('✅ Prérequis sauvegardés:', savedTraining.prerequis);
+      } else {
+        console.warn('⚠️ Aucun prérequis sauvegardé');
       }
       if (savedTraining.programme && savedTraining.programme.trim() !== '') {
-        console.log('✅ Programme sauvegardé');
+        console.log('✅ Programme sauvegardé:', savedTraining.programme);
+      } else {
+        console.warn('⚠️ Aucun programme sauvegardé');
       }
       if (savedTraining.description && savedTraining.description.trim() !== '') {
         console.log('✅ Description sauvegardée');
@@ -427,31 +439,12 @@ const TrainerDashboard = () => {
       setShowEditModal(false);
       setTrainingData(null);
       
-      // Réinitialiser le formulaire
-      setFullTrainingFormData({
-        title: '',
-        duration: '',
-        location: '',
-        price: '',
-        startDate: '',
-        endDate: '',
-        status: 'A Venir',
-        description: '',
-        objectifs: [],
-        programme: [],
-        prerequis: []
-      });
-      setEditingObjective('');
-      setEditingPrerequis('');
-      setEditingProgramme('');
-      
-      // Recharger les données du dashboard
+      // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
       const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
         setDashboardData(data);
-        console.log('✅ Dashboard rechargé avec les nouvelles données');
       }
     } catch (err) {
       console.error('Erreur:', err);
@@ -1130,12 +1123,12 @@ const TrainerDashboard = () => {
               {/* 2. PROGRAMME */}
               <h3 className="trainer-section-title" style={{ marginTop: '24px', marginBottom: '16px' }}>Programme détaillé</h3>
               <p className="trainer-form-hint" style={{ marginTop: '-12px', marginBottom: '12px' }}>
-                Décrivez le programme complet de la formation, module par module si nécessaire
+                Ajoutez les modules du programme un par un. Chaque élément sera affiché comme un module distinct.
               </p>
               <div className="trainer-form-group">
                 {fullTrainingFormData.programme.length === 0 && (
                   <p className="trainer-form-hint" style={{ fontStyle: 'italic', color: '#999', marginBottom: '12px' }}>
-                    Aucun élément de programme ajouté. Cliquez sur "Ajouter" après avoir saisi un élément.
+                    Aucun module de programme ajouté. Cliquez sur "Ajouter" après avoir saisi un module.
                   </p>
                 )}
                 <div className="trainer-prerequis-list">
@@ -1159,7 +1152,7 @@ const TrainerDashboard = () => {
                     type="text"
                     value={editingProgramme}
                     onChange={(e) => setEditingProgramme(e.target.value)}
-                    placeholder="Ajouter un élément de programme (ex: Module 1 : Introduction - 2h)"
+                    placeholder="Ajouter un module (ex: Module 1 : Introduction - 2h)"
                     className="trainer-input"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
