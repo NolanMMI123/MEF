@@ -500,6 +500,29 @@
   box-shadow: 0 0 0 3px rgba(10, 61, 124, 0.1);
 }
 
+/* Style pour les inputs de type date */
+.trainer-input[type="date"] {
+  position: relative;
+  cursor: pointer;
+}
+
+.trainer-input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.6;
+  filter: invert(0.3);
+}
+
+.trainer-input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+.trainer-form-hint {
+  font-size: 0.75rem;
+  color: var(--trainer-text-muted);
+  margin-top: 6px;
+  font-style: italic;
+}
+
 .trainer-textarea {
   resize: vertical;
   min-height: 120px;

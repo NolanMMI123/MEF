@@ -45,7 +45,8 @@ const TrainerDashboard = () => {
   const [selectedTrainingForSession, setSelectedTrainingForSession] = useState(null);
   const [sessionFormData, setSessionFormData] = useState({
     title: '',
-    dates: '',
+    startDate: '',
+    endDate: '',
     lieu: '',
     placesTotales: '',
     price: '',
@@ -130,13 +131,32 @@ const TrainerDashboard = () => {
           return;
         }
         setTrainingData(training);
+        // Convertir les dates au format YYYY-MM-DD si elles sont au format texte
+        const convertToDateInput = (dateString) => {
+          if (!dateString) return '';
+          // Si c'est déjà au format YYYY-MM-DD, le retourner tel quel
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+            return dateString;
+          }
+          // Sinon, essayer de parser la date
+          try {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+              return date.toISOString().split('T')[0];
+            }
+          } catch (e) {
+            console.error('Erreur de conversion de date:', e);
+          }
+          return '';
+        };
+
         setFullTrainingFormData({
           title: training.title || '',
           duration: training.duration || '',
           location: training.location || '',
           price: training.price || '',
-          startDate: training.startDate || '',
-          endDate: training.endDate || '',
+          startDate: convertToDateInput(training.startDate),
+          endDate: convertToDateInput(training.endDate),
           status: training.status || 'A Venir',
           objectifs: training.objectifs || [],
           prerequis: training.prerequis || [],
@@ -208,7 +228,8 @@ const TrainerDashboard = () => {
     setSelectedTrainingForSession(training);
     setSessionFormData({
       title: training.title || '',
-      dates: training.startDate && training.endDate ? `${training.startDate} - ${training.endDate}` : '',
+      startDate: training.startDate || '',
+      endDate: training.endDate || '',
       lieu: training.location || '',
       placesTotales: '20',
       price: training.price || '',
@@ -220,15 +241,36 @@ const TrainerDashboard = () => {
   };
 
   const handleSaveSession = async () => {
-    if (!sessionFormData.title || !sessionFormData.dates || !sessionFormData.lieu || !sessionFormData.placesTotales) {
+    if (!sessionFormData.title || !sessionFormData.startDate || !sessionFormData.endDate || !sessionFormData.lieu || !sessionFormData.placesTotales) {
       setToast({ message: 'Veuillez remplir tous les champs obligatoires', type: 'error' });
+      return;
+    }
+
+    // Vérifier que la date de fin est après la date de début
+    if (sessionFormData.startDate && sessionFormData.endDate && sessionFormData.endDate < sessionFormData.startDate) {
+      setToast({ message: 'La date de fin doit être postérieure à la date de début', type: 'error' });
       return;
     }
 
     setSubmitting(true);
     try {
+      // Formater les dates pour l'affichage
+      const formatDate = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const day = date.getDate();
+        const month = date.toLocaleString('fr-FR', { month: 'long' });
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+      };
+
+      const datesFormatted = sessionFormData.startDate && sessionFormData.endDate 
+        ? `${formatDate(sessionFormData.startDate)} - ${formatDate(sessionFormData.endDate)}`
+        : '';
+
       const sessionData = {
         ...sessionFormData,
+        dates: datesFormatted,
         placesTotales: parseInt(sessionFormData.placesTotales),
         placesReservees: 0,
         price: sessionFormData.price ? parseFloat(sessionFormData.price) : null
@@ -851,23 +893,25 @@ const TrainerDashboard = () => {
                 <div className="trainer-form-group">
                   <label className="trainer-form-label">Date de début</label>
                   <input
-                    type="text"
+                    type="date"
                     value={fullTrainingFormData.startDate}
                     onChange={(e) => setFullTrainingFormData(prev => ({ ...prev, startDate: e.target.value }))}
                     className="trainer-input"
-                    placeholder="Ex: 15 Janvier 2025"
+                    min={new Date().toISOString().split('T')[0]}
                   />
+                  <p className="trainer-form-hint">Sélectionnez la date de début de la formation</p>
                 </div>
 
                 <div className="trainer-form-group">
                   <label className="trainer-form-label">Date de fin</label>
                   <input
-                    type="text"
+                    type="date"
                     value={fullTrainingFormData.endDate}
                     onChange={(e) => setFullTrainingFormData(prev => ({ ...prev, endDate: e.target.value }))}
                     className="trainer-input"
-                    placeholder="Ex: 19 Janvier 2025"
+                    min={fullTrainingFormData.startDate || new Date().toISOString().split('T')[0]}
                   />
+                  <p className="trainer-form-hint">Sélectionnez la date de fin de la formation</p>
                 </div>
               </div>
 
@@ -1034,16 +1078,32 @@ const TrainerDashboard = () => {
                 />
               </div>
 
-              <div className="trainer-form-group">
-                <label className="trainer-form-label">Dates *</label>
-                <input
-                  type="text"
-                  value={sessionFormData.dates}
-                  onChange={(e) => setSessionFormData(prev => ({ ...prev, dates: e.target.value }))}
-                  className="trainer-input"
-                  placeholder="Ex: 15 Janvier 2025 - 19 Janvier 2025"
-                  required
-                />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="trainer-form-group">
+                  <label className="trainer-form-label">Date de début *</label>
+                  <input
+                    type="date"
+                    value={sessionFormData.startDate}
+                    onChange={(e) => setSessionFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                    className="trainer-input"
+                    min={new Date().toISOString().split('T')[0]}
+                    required
+                  />
+                  <p className="trainer-form-hint">Sélectionnez la date de début</p>
+                </div>
+
+                <div className="trainer-form-group">
+                  <label className="trainer-form-label">Date de fin *</label>
+                  <input
+                    type="date"
+                    value={sessionFormData.endDate}
+                    onChange={(e) => setSessionFormData(prev => ({ ...prev, endDate: e.target.value }))}
+                    className="trainer-input"
+                    min={sessionFormData.startDate || new Date().toISOString().split('T')[0]}
+                    required
+                  />
+                  <p className="trainer-form-hint">Sélectionnez la date de fin</p>
+                </div>
               </div>
 
               <div className="trainer-form-group">
