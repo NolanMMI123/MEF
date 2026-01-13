@@ -33,6 +33,8 @@ public class SessionFormation {
     private String dates;       // Gardé pour compatibilité
     private int placesTotales;  
     private int placesReservees;
+    
+    private String imageUrl;    // URL ou base64 de l'image d'aperçu
 
     public SessionFormation() {}
 
@@ -70,4 +72,7 @@ public class SessionFormation {
 
     public int getPlacesReservees() { return placesReservees; }
     public void setPlacesReservees(int placesReservees) { this.placesReservees = placesReservees; }
+    
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }

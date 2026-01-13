@@ -152,15 +152,26 @@ const Catalogue = () => {
                                     >
                                         <Card className="h-100 border-0 shadow-sm overflow-hidden" style={{ borderRadius: '12px' }}>
 
-                                            <div className="position-relative" style={{ height: '140px', backgroundColor: '#e9ecef' }}>
+                                            <div className="position-relative" style={{ height: '140px', backgroundColor: '#e9ecef', overflow: 'hidden' }}>
+                                                {formation.imageUrl ? (
+                                                    <img 
+                                                        src={formation.imageUrl} 
+                                                        alt={formation.title || 'Formation'} 
+                                                        style={{ 
+                                                            width: '100%', 
+                                                            height: '100%', 
+                                                            objectFit: 'cover' 
+                                                        }}
+                                                    />
+                                                ) : null}
                                                 <span
                                                     className="position-absolute top-0 end-0 m-3 px-2 py-1 rounded-1 fw-bold text-dark"
-                                                    style={{ backgroundColor: theme.colors.accent, fontSize: '0.7rem' }}
+                                                    style={{ backgroundColor: theme.colors.accent, fontSize: '0.7rem', zIndex: 1 }}
                                                 >
                                                     {formation.category || "Informatique"}
                                                 </span>
 
-                                                <span className="position-absolute bottom-0 start-0 m-3 px-2 py-1 bg-white rounded-pill shadow-sm small fw-bold" style={{ fontSize: '0.7rem' }}>
+                                                <span className="position-absolute bottom-0 start-0 m-3 px-2 py-1 bg-white rounded-pill shadow-sm small fw-bold" style={{ fontSize: '0.7rem', zIndex: 1 }}>
                                                     {formation.sessions || formation.placesTotales || 10} places disponibles
                                                 </span>
                                             </div>
