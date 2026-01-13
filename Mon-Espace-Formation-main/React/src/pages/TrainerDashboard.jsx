@@ -16,11 +16,20 @@ const TrainerDashboard = () => {
   const [error, setError] = useState(null);
   const [selectedFormation, setSelectedFormation] = useState(null);
   const [showInscritsModal, setShowInscritsModal] = useState(false);
+  const [trainingData, setTrainingData] = useState(null);
+  const [pedagogicalFormData, setPedagogicalFormData] = useState({
+    objectifs: [],
+    prerequis: [],
+    programme: ''
+  });
+  const [editingObjective, setEditingObjective] = useState('');
+  const [editingPrerequis, setEditingPrerequis] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchData = async () => {
       try {
         const userEmail = localStorage.getItem('userEmail');
         if (!userEmail) {
@@ -28,12 +37,36 @@ const TrainerDashboard = () => {
           return;
         }
 
-        const response = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
-        if (!response.ok) {
-          throw new Error('Erreur lors du chargement des données');
+        if (id) {
+          // Mode édition : charger les données de la formation
+          const response = await fetch(`http://localhost:8080/api/trainings/${id}`);
+          if (!response.ok) {
+            throw new Error('Erreur lors du chargement de la formation');
+          }
+          const training = await response.json();
+          setTrainingData(training);
+          
+          // Vérifier que le formateur est bien assigné à cette formation
+          const user = JSON.parse(localStorage.getItem('user') || '{}');
+          if (training.trainerId !== user.id) {
+            setError('Vous n\'êtes pas autorisé à modifier cette formation');
+            return;
+          }
+
+          setPedagogicalFormData({
+            objectifs: training.objectifs || [],
+            prerequis: training.prerequis || [],
+            programme: training.programme || ''
+          });
+        } else {
+          // Mode dashboard : charger les données du dashboard
+          const response = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
+          if (!response.ok) {
+            throw new Error('Erreur lors du chargement des données');
+          }
+          const data = await response.json();
+          setDashboardData(data);
         }
-        const data = await response.json();
-        setDashboardData(data);
       } catch (err) {
         console.error('Erreur:', err);
         setError(err.message);
@@ -42,8 +75,8 @@ const TrainerDashboard = () => {
       }
     };
 
-    fetchDashboardData();
-  }, [navigate]);
+    fetchData();
+  }, [navigate, id]);
 
   const handleViewInscrits = (formation) => {
     setSelectedFormation(formation);
@@ -57,6 +90,67 @@ const TrainerDashboard = () => {
 
   const handleEditFormation = (formationId) => {
     navigate(`/trainer/formations/${formationId}`);
+  };
+
+  const handleAddObjective = () => {
+    if (editingObjective.trim()) {
+      setPedagogicalFormData(prev => ({
+        ...prev,
+        objectifs: [...prev.objectifs, editingObjective.trim()]
+      }));
+      setEditingObjective('');
+    }
+  };
+
+  const handleRemoveObjective = (index) => {
+    setPedagogicalFormData(prev => ({
+      ...prev,
+      objectifs: prev.objectifs.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleAddPrerequis = () => {
+    if (editingPrerequis.trim()) {
+      setPedagogicalFormData(prev => ({
+        ...prev,
+        prerequis: [...prev.prerequis, editingPrerequis.trim()]
+      }));
+      setEditingPrerequis('');
+    }
+  };
+
+  const handleRemovePrerequis = (index) => {
+    setPedagogicalFormData(prev => ({
+      ...prev,
+      prerequis: prev.prerequis.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleSavePedagogicalContent = async () => {
+    if (!id) return;
+
+    setSubmitting(true);
+    try {
+      const response = await fetch(`http://localhost:8080/api/trainings/${id}/pedagogical-content`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pedagogicalFormData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la sauvegarde');
+      }
+
+      alert('Contenu pédagogique sauvegardé avec succès !');
+      navigate('/trainer/dashboard');
+    } catch (err) {
+      console.error('Erreur:', err);
+      alert('Erreur lors de la sauvegarde : ' + err.message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const handleLogout = () => {
@@ -96,6 +190,135 @@ const TrainerDashboard = () => {
         </div>
       </div>
     );
+  }
+
+  // Mode édition du contenu pédagogique
+  if (id && trainingData) {
+    return (
+      <div className="trainer-dashboard-wrapper">
+        <header className="trainer-header">
+          <div className="trainer-header-content">
+            <div className="trainer-header-left">
+              <h1 className="trainer-title">Édition du contenu pédagogique</h1>
+              <p className="trainer-subtitle">{trainingData.title}</p>
+            </div>
+            <div className="trainer-header-right">
+              <button 
+                className="trainer-header-btn" 
+                onClick={() => navigate('/trainer/dashboard')}
+              >
+                <ArrowLeft size={16} /> Retour
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main className="trainer-main">
+          <div className="trainer-edit-section">
+            <h2 className="trainer-section-title">Objectifs de la formation</h2>
+            <div className="trainer-form-group">
+              <div className="trainer-objectives-list">
+                {pedagogicalFormData.objectifs.map((obj, index) => (
+                  <div key={index} className="trainer-list-item">
+                    <span>{obj}</span>
+                    <button 
+                      className="trainer-remove-btn"
+                      onClick={() => handleRemoveObjective(index)}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="trainer-add-input">
+                <input
+                  type="text"
+                  value={editingObjective}
+                  onChange={(e) => setEditingObjective(e.target.value)}
+                  placeholder="Ajouter un objectif"
+                  className="trainer-input"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddObjective()}
+                />
+                <button 
+                  className="trainer-btn trainer-btn-primary"
+                  onClick={handleAddObjective}
+                >
+                  Ajouter
+                </button>
+              </div>
+            </div>
+
+            <h2 className="trainer-section-title">Prérequis</h2>
+            <div className="trainer-form-group">
+              <div className="trainer-prerequis-list">
+                {pedagogicalFormData.prerequis.map((prereq, index) => (
+                  <div key={index} className="trainer-list-item">
+                    <span>{prereq}</span>
+                    <button 
+                      className="trainer-remove-btn"
+                      onClick={() => handleRemovePrerequis(index)}
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="trainer-add-input">
+                <input
+                  type="text"
+                  value={editingPrerequis}
+                  onChange={(e) => setEditingPrerequis(e.target.value)}
+                  placeholder="Ajouter un prérequis"
+                  className="trainer-input"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddPrerequis()}
+                />
+                <button 
+                  className="trainer-btn trainer-btn-primary"
+                  onClick={handleAddPrerequis}
+                >
+                  Ajouter
+                </button>
+              </div>
+            </div>
+
+            <h2 className="trainer-section-title">Programme détaillé</h2>
+            <div className="trainer-form-group">
+              <textarea
+                value={pedagogicalFormData.programme}
+                onChange={(e) => setPedagogicalFormData(prev => ({
+                  ...prev,
+                  programme: e.target.value
+                }))}
+                placeholder="Décrivez le programme détaillé de la formation..."
+                className="trainer-textarea"
+                rows={10}
+              />
+            </div>
+
+            <div className="trainer-edit-actions">
+              <button 
+                className="trainer-btn trainer-btn-secondary"
+                onClick={() => navigate('/trainer/dashboard')}
+              >
+                Annuler
+              </button>
+              <button 
+                className="trainer-btn trainer-btn-primary"
+                onClick={handleSavePedagogicalContent}
+                disabled={submitting}
+              >
+                {submitting ? 'Sauvegarde...' : 'Sauvegarder'}
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // Mode dashboard
+  if (!dashboardData) {
+    return null;
   }
 
   const { trainer, formations, stats } = dashboardData;

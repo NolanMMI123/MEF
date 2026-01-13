@@ -412,3 +412,94 @@
   color: #2e7d32;
 }
 
+/* Édition du contenu pédagogique */
+.trainer-edit-section {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.trainer-form-group {
+  margin-bottom: 32px;
+}
+
+.trainer-objectives-list,
+.trainer-prerequis-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.trainer-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+}
+
+.trainer-list-item span {
+  flex: 1;
+  color: #333;
+}
+
+.trainer-remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d32f2f;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.trainer-remove-btn:hover {
+  color: #b71c1c;
+}
+
+.trainer-add-input {
+  display: flex;
+  gap: 8px;
+}
+
+.trainer-input {
+  flex: 1;
+  padding: 10px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.trainer-input:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.trainer-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.trainer-textarea:focus {
+  outline: none;
+  border-color: #1976d2;
+}
+
+.trainer-edit-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+

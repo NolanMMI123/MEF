@@ -59,7 +59,9 @@ public class UserController {
                     fullname,
                     user.getEmail() != null ? user.getEmail() : "N/A",
                     user.getPoste() != null ? user.getPoste() : "N/A",
-                    activeSessions
+                    activeSessions,
+                    user.getTypeContrat(),
+                    user.getTarif()
                 );
 
                 result.add(dto);
@@ -98,6 +100,80 @@ public class UserController {
 
             User saved = userRepository.save(user);
             return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Endpoint pour mettre à jour un formateur
+     * PUT /api/users/trainer/{id}
+     */
+    @PutMapping("/trainer/{id}")
+    public ResponseEntity<User> updateTrainer(@PathVariable String id, @RequestBody User userUpdate) {
+        try {
+            Optional<User> userOpt = userRepository.findById(id);
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            User user = userOpt.get();
+            
+            // Vérifier que c'est bien un formateur
+            if (user.getRole() == null || !user.getRole().equals("TRAINER")) {
+                return ResponseEntity.badRequest().build();
+            }
+
+            // Mettre à jour les champs
+            if (userUpdate.getNom() != null) {
+                user.setNom(userUpdate.getNom());
+            }
+            if (userUpdate.getPrenom() != null) {
+                user.setPrenom(userUpdate.getPrenom());
+            }
+            if (userUpdate.getEmail() != null) {
+                user.setEmail(userUpdate.getEmail());
+            }
+            if (userUpdate.getPoste() != null) {
+                user.setPoste(userUpdate.getPoste());
+            }
+            if (userUpdate.getTypeContrat() != null) {
+                user.setTypeContrat(userUpdate.getTypeContrat());
+            }
+            if (userUpdate.getTarif() != null) {
+                user.setTarif(userUpdate.getTarif());
+            }
+            // Mettre à jour le mot de passe seulement s'il est fourni
+            if (userUpdate.getPassword() != null && !userUpdate.getPassword().isEmpty()) {
+                user.setPassword(passwordEncoder.encode(userUpdate.getPassword()));
+            }
+
+            User saved = userRepository.save(user);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Endpoint pour récupérer un formateur par son ID
+     * GET /api/users/trainer/{id}
+     */
+    @GetMapping("/trainer/{id}")
+    public ResponseEntity<User> getTrainerById(@PathVariable String id) {
+        try {
+            Optional<User> userOpt = userRepository.findById(id);
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            User user = userOpt.get();
+            // Vérifier que c'est bien un formateur
+            if (user.getRole() == null || !user.getRole().equals("TRAINER")) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(user);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

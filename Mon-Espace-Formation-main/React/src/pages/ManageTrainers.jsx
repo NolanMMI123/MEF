@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../components/AdminLayout';
 import Toast from '../components/Toast';
-import { FaEye, FaCalendarAlt, FaPlus } from 'react-icons/fa';
+import { FaEye, FaCalendarAlt, FaPlus, FaEdit } from 'react-icons/fa';
 import { X } from 'lucide-react';
 import './ManageTrainers.css';
 
@@ -20,9 +20,12 @@ const ManageTrainers = () => {
     prenom: '',
     email: '',
     password: '',
-    poste: ''
+    poste: '',
+    typeContrat: '',
+    tarif: ''
   });
   const [submitting, setSubmitting] = useState(false);
+  const [editingTrainerId, setEditingTrainerId] = useState(null);
 
   useEffect(() => {
     fetchTrainers();
@@ -45,26 +48,64 @@ const ManageTrainers = () => {
   };
 
   // Gérer l'ouverture du modal
-  const handleOpenModal = () => {
-    setFormData({
-      nom: '',
-      prenom: '',
-      email: '',
-      password: '',
-      poste: ''
-    });
-    setShowModal(true);
+  const handleOpenModal = (trainer = null) => {
+    if (trainer) {
+      // Mode édition - récupérer les données complètes du formateur
+      fetch(`http://localhost:8080/api/users/trainer/${trainer.id}`)
+        .then(res => {
+          if (!res.ok) throw new Error('Erreur lors du chargement');
+          return res.json();
+        })
+        .then(fullTrainer => {
+          // Extraire nom et prénom du fullname
+          const nameParts = (trainer.fullname || '').split(' ');
+          const prenom = nameParts.length > 0 ? nameParts[0] : '';
+          const nom = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+          
+          setFormData({
+            nom: fullTrainer.nom || nom || '',
+            prenom: fullTrainer.prenom || prenom || '',
+            email: fullTrainer.email || '',
+            password: '', // Ne pas pré-remplir le mot de passe
+            poste: fullTrainer.poste || trainer.speciality || '',
+            typeContrat: fullTrainer.typeContrat || '',
+            tarif: fullTrainer.tarif || ''
+          });
+          setEditingTrainerId(trainer.id);
+          setShowModal(true);
+        })
+        .catch(err => {
+          console.error('Erreur lors du chargement du formateur:', err);
+          setToast({ message: 'Erreur lors du chargement des données', type: 'error' });
+        });
+    } else {
+      // Mode création
+      setFormData({
+        nom: '',
+        prenom: '',
+        email: '',
+        password: '',
+        poste: '',
+        typeContrat: '',
+        tarif: ''
+      });
+      setEditingTrainerId(null);
+      setShowModal(true);
+    }
   };
 
   // Gérer la fermeture du modal
   const handleCloseModal = () => {
     setShowModal(false);
+    setEditingTrainerId(null);
     setFormData({
       nom: '',
       prenom: '',
       email: '',
       password: '',
-      poste: ''
+      poste: '',
+      typeContrat: '',
+      tarif: ''
     });
   };
 
@@ -96,30 +137,62 @@ const ManageTrainers = () => {
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:8080/api/users/trainer', {
-        method: 'POST',
+      const url = editingTrainerId 
+        ? `http://localhost:8080/api/users/trainer/${editingTrainerId}`
+        : 'http://localhost:8080/api/users/trainer';
+      
+      const method = editingTrainerId ? 'PUT' : 'POST';
+      
+      const bodyData = {
+        nom: formData.nom,
+        prenom: formData.prenom,
+        email: formData.email,
+        poste: formData.poste,
+        typeContrat: formData.typeContrat || null,
+        tarif: formData.tarif ? parseFloat(formData.tarif) : null
+      };
+      
+      // Ajouter le mot de passe seulement s'il est fourni (pour la création ou la modification)
+      if (formData.password) {
+        bodyData.password = formData.password;
+      } else if (!editingTrainerId) {
+        // Mot de passe par défaut seulement pour la création
+        bodyData.password = 'trainer123';
+      }
+
+      const response = await fetch(url, {
+        method: method,
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          ...formData,
-          password: formData.password || 'trainer123' // Mot de passe par défaut si non fourni
-        })
+        body: JSON.stringify(bodyData)
       });
 
       if (!response.ok) {
         if (response.status === 400) {
           throw new Error('Cet email est déjà utilisé');
         }
-        throw new Error('Erreur lors de la création du formateur');
+        throw new Error(editingTrainerId 
+          ? 'Erreur lors de la modification du formateur' 
+          : 'Erreur lors de la création du formateur');
       }
 
-      setToast({ message: 'Formateur créé avec succès !', type: 'success' });
+      setToast({ 
+        message: editingTrainerId 
+          ? 'Formateur modifié avec succès !' 
+          : 'Formateur créé avec succès !', 
+        type: 'success' 
+      });
       handleCloseModal();
       await fetchTrainers(); // Rafraîchir la liste
     } catch (err) {
       console.error('Erreur:', err);
-      setToast({ message: err.message || 'Erreur lors de la création du formateur', type: 'error' });
+      setToast({ 
+        message: err.message || (editingTrainerId 
+          ? 'Erreur lors de la modification du formateur' 
+          : 'Erreur lors de la création du formateur'), 
+        type: 'error' 
+      });
     } finally {
       setSubmitting(false);
     }
@@ -201,15 +274,32 @@ const ManageTrainers = () => {
                   <div className="trainer-email">📧 {trainer.email || 'N/A'}</div>
                 </div>
                 <div className="trainer-actions">
-                  <button className="trainer-action-btn">
-                    <FaEye />
-                    Profil
+                  <button 
+                    className="trainer-action-btn"
+                    onClick={() => handleOpenModal(trainer)}
+                  >
+                    <FaEdit />
+                    Modifier
                   </button>
                   <button className="trainer-action-btn">
                     <FaCalendarAlt />
                     Planning
                   </button>
                 </div>
+                {(trainer.typeContrat || trainer.tarif) && (
+                  <div className="trainer-contract-info">
+                    {trainer.typeContrat && (
+                      <div className="trainer-contract-type">
+                        Contrat: {trainer.typeContrat}
+                      </div>
+                    )}
+                    {trainer.tarif && (
+                      <div className="trainer-tarif">
+                        Tarif: {trainer.tarif}€
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -221,7 +311,9 @@ const ManageTrainers = () => {
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3 className="modal-title">Ajouter un formateur</h3>
+              <h3 className="modal-title">
+                {editingTrainerId ? 'Modifier le formateur' : 'Ajouter un formateur'}
+              </h3>
               <button className="modal-close" onClick={handleCloseModal}>
                 <X size={20} />
               </button>
@@ -281,16 +373,50 @@ const ManageTrainers = () => {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Mot de passe (optionnel)</label>
+                <label className="form-label">Type de contrat</label>
+                <select
+                  name="typeContrat"
+                  value={formData.typeContrat}
+                  onChange={handleInputChange}
+                  className="form-input"
+                >
+                  <option value="">Sélectionner un type</option>
+                  <option value="Freelance">Freelance</option>
+                  <option value="CDD">CDD</option>
+                  <option value="Vacataire">Vacataire</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Tarif (€)</label>
+                <input
+                  type="number"
+                  name="tarif"
+                  value={formData.tarif}
+                  onChange={handleInputChange}
+                  className="form-input"
+                  placeholder="Ex: 500 (tarif horaire ou journalier)"
+                  min="0"
+                  step="0.01"
+                />
+                <p className="form-hint">Tarif horaire ou journalier en euros</p>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Mot de passe {editingTrainerId ? '(laisser vide pour ne pas modifier)' : '(optionnel)'}
+                </label>
                 <input
                   type="password"
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
                   className="form-input"
-                  placeholder="Laissez vide pour utiliser 'trainer123' par défaut"
+                  placeholder={editingTrainerId ? "Laisser vide pour ne pas modifier" : "Laissez vide pour utiliser 'trainer123' par défaut"}
                 />
-                <p className="form-hint">Si non renseigné, le mot de passe par défaut sera "trainer123"</p>
+                {!editingTrainerId && (
+                  <p className="form-hint">Si non renseigné, le mot de passe par défaut sera "trainer123"</p>
+                )}
               </div>
 
               <div className="modal-actions">
@@ -298,7 +424,9 @@ const ManageTrainers = () => {
                   Annuler
                 </button>
                 <button type="submit" className="btn-submit" disabled={submitting}>
-                  {submitting ? 'Création...' : 'Ajouter le formateur'}
+                  {submitting 
+                    ? (editingTrainerId ? 'Modification...' : 'Création...') 
+                    : (editingTrainerId ? 'Modifier le formateur' : 'Ajouter le formateur')}
                 </button>
               </div>
             </form>

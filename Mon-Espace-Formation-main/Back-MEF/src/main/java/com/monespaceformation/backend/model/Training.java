@@ -30,6 +30,11 @@ public class Training {
     // Statut (pour l'affichage "A Venir", "En cours")
     private String status;
 
+    // Contenu pédagogique (éditable par le formateur)
+    private List<String> objectifs;    // Liste des objectifs de la formation
+    private List<String> prerequis;    // Liste des prérequis
+    private String programme;           // Programme détaillé de la formation
+
     // Liste des documents (simulés pour l'instant)
     private List<TrainingDocument> documents;
 }

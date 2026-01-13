@@ -128,6 +128,16 @@ public class TrainingController {
             if (trainingUpdate.getStatus() != null) {
                 training.setStatus(trainingUpdate.getStatus());
             }
+            // Mettre à jour le contenu pédagogique
+            if (trainingUpdate.getObjectifs() != null) {
+                training.setObjectifs(trainingUpdate.getObjectifs());
+            }
+            if (trainingUpdate.getPrerequis() != null) {
+                training.setPrerequis(trainingUpdate.getPrerequis());
+            }
+            if (trainingUpdate.getProgramme() != null) {
+                training.setProgramme(trainingUpdate.getProgramme());
+            }
 
             Training saved = trainingRepository.save(training);
             return ResponseEntity.ok(saved);
@@ -162,6 +172,42 @@ public class TrainingController {
 
             trainingRepository.deleteById(id);
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    /**
+     * Mettre à jour uniquement le contenu pédagogique d'une formation
+     * PUT /api/trainings/{id}/pedagogical-content
+     * Accessible aux formateurs pour modifier objectifs, prerequis et programme
+     */
+    @PutMapping("/{id}/pedagogical-content")
+    public ResponseEntity<Training> updatePedagogicalContent(
+            @PathVariable String id, 
+            @RequestBody Training trainingUpdate) {
+        try {
+            Optional<Training> trainingOpt = trainingRepository.findById(id);
+            if (trainingOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Training training = trainingOpt.get();
+            
+            // Mettre à jour uniquement le contenu pédagogique
+            if (trainingUpdate.getObjectifs() != null) {
+                training.setObjectifs(trainingUpdate.getObjectifs());
+            }
+            if (trainingUpdate.getPrerequis() != null) {
+                training.setPrerequis(trainingUpdate.getPrerequis());
+            }
+            if (trainingUpdate.getProgramme() != null) {
+                training.setProgramme(trainingUpdate.getProgramme());
+            }
+
+            Training saved = trainingRepository.save(training);
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

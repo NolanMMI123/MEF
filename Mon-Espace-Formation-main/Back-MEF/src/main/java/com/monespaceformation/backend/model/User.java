@@ -16,6 +16,10 @@ public class User {
     private String entreprise;
     private String poste;
     private String role; // "USER", "TRAINER", "ADMIN"
+    
+    // Champs pour la gestion de la rentabilité (formateurs)
+    private String typeContrat; // "Freelance", "CDD", "Vacataire"
+    private Double tarif; // Tarif horaire ou journalier en euros
 
     // Constructeur vide
     public User() {}
@@ -53,4 +57,10 @@ public class User {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getTypeContrat() { return typeContrat; }
+    public void setTypeContrat(String typeContrat) { this.typeContrat = typeContrat; }
+
+    public Double getTarif() { return tarif; }
+    public void setTarif(Double tarif) { this.tarif = tarif; }
 }
