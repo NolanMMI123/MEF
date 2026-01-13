@@ -21,8 +21,7 @@ const ManageTrainers = () => {
     email: '',
     password: '',
     poste: '',
-    typeContrat: '',
-    tarif: ''
+    typeContrat: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [editingTrainerId, setEditingTrainerId] = useState(null);
@@ -72,8 +71,7 @@ const ManageTrainers = () => {
               email: fullTrainer.email || '',
               password: '', // Ne pas pré-remplir le mot de passe
               poste: fullTrainer.poste || trainer.speciality || '',
-              typeContrat: fullTrainer.typeContrat || '',
-              tarif: fullTrainer.tarif ? String(fullTrainer.tarif) : ''
+              typeContrat: fullTrainer.typeContrat || ''
             });
             setEditingTrainerId(trainer.id);
             setShowModal(true);
@@ -92,8 +90,7 @@ const ManageTrainers = () => {
           email: '',
           password: '',
           poste: '',
-          typeContrat: '',
-          tarif: ''
+          typeContrat: ''
         });
         setEditingTrainerId(null);
         setShowModal(true);
@@ -115,8 +112,7 @@ const ManageTrainers = () => {
       email: '',
       password: '',
       poste: '',
-      typeContrat: '',
-      tarif: ''
+      typeContrat: ''
     });
   };
 
@@ -164,11 +160,6 @@ const ManageTrainers = () => {
       // Ajouter typeContrat seulement s'il est renseigné
       if (formData.typeContrat && formData.typeContrat.trim() !== '') {
         bodyData.typeContrat = formData.typeContrat;
-      }
-      
-      // Ajouter tarif seulement s'il est renseigné et valide
-      if (formData.tarif && formData.tarif !== '' && !isNaN(parseFloat(formData.tarif))) {
-        bodyData.tarif = parseFloat(formData.tarif);
       }
       
       // Ajouter le mot de passe seulement s'il est fourni (pour la création ou la modification)
@@ -461,21 +452,6 @@ const ManageTrainers = () => {
                   <option value="CDD">CDD</option>
                   <option value="Vacataire">Vacataire</option>
                 </select>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Tarif (€)</label>
-                <input
-                  type="number"
-                  name="tarif"
-                  value={formData.tarif}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  placeholder="Ex: 500 (tarif horaire ou journalier)"
-                  min="0"
-                  step="0.01"
-                />
-                <p className="form-hint">Tarif horaire ou journalier en euros</p>
               </div>
 
               <div className="form-group">

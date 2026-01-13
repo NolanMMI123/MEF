@@ -5,9 +5,66 @@ import {
     User, BookOpen, CreditCard, ShieldCheck 
 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-// AJOUT : Import d'EmailJS
 import emailjs from '@emailjs/browser';
 
+// --- 1. IMPORTS STRIPE ---
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+
+// Ta clé publique (Mode Test)
+const stripePromise = loadStripe('pk_test_51SpFTID5WWksLHsg7do8u5HhYaEfc1LHgDHiPEYH6QNRwQdgKX43BAMmqg5qEbwpTWmzUYVUuD1f6kEDBKjd61gv00aeevginT');
+
+// --- 2. LE COMPOSANT DU FORMULAIRE DE PAIEMENT ---
+const CheckoutForm = ({ onPaymentSuccess }) => {
+    const stripe = useStripe();
+    const elements = useElements();
+    const [errorMessage, setErrorMessage] = useState(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (!stripe || !elements) return;
+
+        setIsProcessing(true);
+
+        // On demande à Stripe de valider le paiement
+        const { error, paymentIntent } = await stripe.confirmPayment({
+            elements,
+            redirect: "if_required", // Important pour ne pas recharger la page
+        });
+
+        if (error) {
+            setErrorMessage(error.message);
+            setIsProcessing(false);
+        } else if (paymentIntent && paymentIntent.status === "succeeded") {
+            // Si Stripe dit "C'est bon", on lance l'inscription Backend
+            onPaymentSuccess();
+        } else {
+            setIsProcessing(false);
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+            {/* L'élément sécurisé de Stripe qui affiche le champ Carte Bancaire */}
+            <div className="mb-3">
+                <PaymentElement />
+            </div>
+            
+            {errorMessage && <div className="alert alert-danger small mt-2">{errorMessage}</div>}
+            
+            <button 
+                disabled={!stripe || isProcessing} 
+                className="btn-pay w-100" // On garde ta classe CSS "btn-pay"
+                style={{ marginTop: '1rem' }}
+            >
+                {isProcessing ? "Validation bancaire..." : "Payer 2490€"}
+            </button>
+        </form>
+    );
+};
+
+// --- 3. TON COMPOSANT PRINCIPAL ---
 const InscriptionPage = () => {
   const { id } = useParams(); 
   const navigate = useNavigate();
@@ -17,18 +74,15 @@ const InscriptionPage = () => {
   const [selectedSession, setSelectedSession] = useState(null);
   const [sessions, setSessions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // États pour le paiement
+  const [clientSecret, setClientSecret] = useState(""); 
+  const [backendError, setBackendError] = useState(false); // Pour gérer l'erreur de chargement
 
   const [formData, setFormData] = useState({
       typeInscription: 'individuel',
-      nom: '',
-      prenom: '',
-      email: '',
-      telephone: '',
-      adresse: '',
-      cp: '',
-      ville: '',
-      entreprise: '', 
-      poste: ''
+      nom: '', prenom: '', email: '', telephone: '',
+      adresse: '', cp: '', ville: '', entreprise: '', poste: ''
   });
 
   useEffect(() => {
@@ -60,6 +114,29 @@ const InscriptionPage = () => {
         });
   }, [navigate]);
 
+  // --- NOUVEAU : On prépare le paiement quand on arrive à l'étape 3 ---
+  useEffect(() => {
+      if (step === 3) {
+          setBackendError(false); // On remet l'erreur à zéro
+          
+          // On demande au Backend de préparer la transaction
+          fetch("http://localhost:8080/api/payment/create-intent", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ amount: 2490 }) 
+          })
+          .then((res) => {
+              if(!res.ok) throw new Error("Erreur Backend"); // Si le serveur répond mal
+              return res.json();
+          })
+          .then((data) => setClientSecret(data.clientSecret))
+          .catch((err) => {
+              console.error("Erreur Stripe Init:", err);
+              setBackendError(true); // Active le message d'erreur à l'écran
+          });
+      }
+  }, [step]);
+
   const handleInputChange = (e) => {
       const { name, value, type } = e.target;
       setFormData(prev => ({
@@ -68,25 +145,13 @@ const InscriptionPage = () => {
       }));
   };
 
-  // --- FONCTION DE PAIEMENT MODIFIÉE ---
-  const handlePayment = async () => {
-    if (!selectedSession) return;
-
+  // --- ANCIENNE FONCTION "handlePayment" RENOMMÉE EN "finaliserInscription" ---
+  // Elle ne se lance que si Stripe a validé le paiement
+  const finaliserInscription = async () => {
     const storedUser = localStorage.getItem('user');
-    if (!storedUser) {
-        alert("Session expirée. Reconnectez-vous.");
-        navigate('/connexion');
-        return;
-    }
     const currentUser = JSON.parse(storedUser);
-
-    // On cherche l'ID partout
     const realUserId = currentUser.id || currentUser._id || currentUser.userId;
-
-    if (!realUserId) {
-        alert("ERREUR : Impossible de trouver votre ID utilisateur. Essayez de vous déconnecter et reconnecter.");
-        return;
-    }
+    const sessionDetails = sessions.find(s => s.id === selectedSession);
 
     const dataToSend = {
         userId: realUserId,
@@ -105,52 +170,40 @@ const InscriptionPage = () => {
         });
 
         if (response.ok) {
-            // === C'EST ICI QUE TOUT CHANGE ===
-            
-            // 1. On retrouve les infos de la session pour l'affichage
-            const sessionDetails = sessions.find(s => s.id === selectedSession);
-            
-            // 2. On génère un numéro de commande bidon
             const refCommande = "INS-" + Date.now().toString().slice(-8);
 
-            // --- DEBUT BLOC EMAILJS ---
-            // On prépare les données pour le template "Order Confirmation"
+            // --- EMAIL JS ---
             const templateParams = {
                 order_id: refCommande,
-                email: formData.email, // L'email du destinataire (celui du formulaire)
-                // Tableau orders pour la boucle du template
+                email: formData.email,
                 orders: [
                     {
-                        name: "Formation Complète", // Ou sessionDetails.title si dispo
+                        name: "Formation Complète", 
                         price: "2490€",
                         units: "1"
                     }
                 ],
-                // On met à 0 car ce n'est pas un produit physique
                 "cost.shipping": "0€",
                 "cost.tax": "0€"
             };
 
-            // Envoi de l'email (en arrière-plan, sans bloquer l'utilisateur)
             emailjs.send(
-                'service_aindt9t',       // VOTRE SERVICE ID
-                'template_4ontamh',      // VOTRE TEMPLATE ID
+                'service_aindt9t',
+                'template_4ontamh',
                 templateParams,
-                'i7HdabS5N1pWaFesk'      // VOTRE PUBLIC KEY
+                'i7HdabS5N1pWaFesk'
             )
             .then((result) => {
-                console.log('Email envoyé avec succès !', result.text);
+                console.log('Email envoyé !');
             }, (error) => {
-                console.error('Erreur lors de l\'envoi de l\'email :', error.text);
+                console.error('Erreur Email', error);
             });
-            // --- FIN BLOC EMAILJS ---
 
-            // 3. On redirige vers la page de succès avec les données
+            // Redirection Succès
             navigate('/succes-inscription', {
                 state: {
                     course: {
                         id: id,
-                        // On essaie de prendre le titre de la session, sinon "Formation"
                         title: sessionDetails.title || "Formation Complète", 
                         price: "2490€",
                         dates: sessionDetails.dates,
@@ -169,29 +222,16 @@ const InscriptionPage = () => {
             });
 
         } else {
-            let errorMessage = "Erreur serveur";
-            try {
-                const errorText = await response.text();
-                // Essayer de parser le JSON si c'est un objet d'erreur
-                try {
-                    const errorJson = JSON.parse(errorText);
-                    errorMessage = errorJson.message || errorJson.error || errorText;
-                } catch {
-                    // Si ce n'est pas du JSON, utiliser le texte tel quel
-                    errorMessage = errorText || `Erreur ${response.status}: ${response.statusText}`;
-                }
-            } catch (e) {
-                errorMessage = `Erreur ${response.status}: ${response.statusText}`;
-            }
-            alert("❌ Erreur : " + errorMessage);
+            const msg = await response.text();
+            alert("❌ Erreur serveur lors de l'inscription : " + msg);
         }
     } catch (error) {
         console.error("Erreur connexion:", error);
-        alert("❌ Erreur de connexion au serveur : " + error.message);
+        alert("❌ Erreur de connexion au serveur.");
     }
   };
 
-  // --- RENDU (TON DESIGN EXACT) ---
+  // --- RENDU ---
   const renderStep1 = () => (
     <div className="bg-white p-4 rounded border mb-4">
         <h5 className="mb-3 fw-bold text-dark">Choisissez une session</h5>
@@ -290,10 +330,27 @@ const InscriptionPage = () => {
                     </>
                 ) : <div className="text-danger">Erreur session</div>}
             </div>
+            
+            {/* --- BLOC PAIEMENT MODIFIÉ (SANS BANDEAU BLEU) --- */}
             <div className="payment-block">
-                <div className="payment-title"><CreditCard size={20}/> Paiement sécurisé</div>
-                <button className="btn-pay" onClick={handlePayment}>Payer 2490€</button>
-                <button className="btn-modify-outline" onClick={() => setStep(2)}><ChevronLeft size={14}/> Modifier</button>
+                <div className="payment-title mb-3"><CreditCard size={20}/> Paiement sécurisé</div>
+
+                {/* GESTION D'ERREUR DU BACKEND */}
+                {backendError ? (
+                    <div className="alert alert-danger">
+                        ❌ Impossible de contacter le serveur de paiement.<br/>
+                        Veuillez vérifier que le Backend est bien lancé.
+                    </div>
+                ) : clientSecret ? (
+                     // Affichage du formulaire Stripe si tout va bien
+                     <Elements options={{ clientSecret, appearance: { theme: 'stripe' } }} stripe={stripePromise}>
+                         <CheckoutForm onPaymentSuccess={finaliserInscription} />
+                     </Elements>
+                ) : (
+                    <div className="text-center py-3 text-muted">Chargement du module de paiement...</div>
+                )}
+                
+                <button className="btn-modify-outline mt-3" onClick={() => setStep(2)}><ChevronLeft size={14}/> Modifier mes infos</button>
             </div>
         </div>
     );

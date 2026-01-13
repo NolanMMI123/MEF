@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   Users, Clock, BookOpen, Eye, X, Edit, Plus, Trash2,
-  ArrowLeft, User as UserIcon, Save, Euro, Calendar
+  ArrowLeft, User as UserIcon, Save, Calendar
 } from 'lucide-react';
 import Toast from '../components/Toast';
 import './TrainerDashboard.css';
@@ -852,20 +852,6 @@ const TrainerDashboard = () => {
             <div className="trainer-stat-content">
               <div className="trainer-stat-value">{stats.heuresCoursPrevues}h</div>
               <div className="trainer-stat-label">Heures de cours prévues</div>
-            </div>
-          </div>
-
-          <div className="trainer-stat-card">
-            <div className="trainer-stat-header">
-              <div className="trainer-stat-icon info">
-                <Euro size={28} color="white" />
-              </div>
-            </div>
-            <div className="trainer-stat-content">
-              <div className="trainer-stat-value">
-                {stats.revenuTotal ? stats.revenuTotal.toFixed(2) : '0.00'}€
-              </div>
-              <div className="trainer-stat-label">Revenu total</div>
             </div>
           </div>
         </div>
