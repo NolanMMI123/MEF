@@ -136,10 +136,19 @@ const FormationDetails = () => {
                                 className="bg-white rounded-3 shadow-lg p-1"
                                 style={{ height: '250px' }}
                             >
-                                {/* Placeholder for Video/Image */}
-                                <div className="w-100 h-100 bg-light rounded-2 d-flex align-items-center justify-content-center text-muted">
-                                    <span>Aperçu de la formation</span>
-                                </div>
+                                {/* Aperçu de l'image de la formation */}
+                                {course.imageUrl ? (
+                                    <img 
+                                        src={course.imageUrl} 
+                                        alt={course.title || 'Aperçu de la formation'} 
+                                        className="w-100 h-100 rounded-2"
+                                        style={{ objectFit: 'cover' }}
+                                    />
+                                ) : (
+                                    <div className="w-100 h-100 bg-light rounded-2 d-flex align-items-center justify-content-center text-muted">
+                                        <span>Aperçu de la formation</span>
+                                    </div>
+                                )}
                             </motion.div>
                         </Col>
                     </Row>

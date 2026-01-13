@@ -34,10 +34,12 @@ const TrainerDashboard = () => {
     endDate: '',
     status: 'A Venir',
     description: '',  // Description générale
+    imageUrl: '',     // URL ou base64 de l'image d'aperçu
     objectifs: [],
     programme: [], // Liste pour le programme
     prerequis: []
   });
+  const [imagePreview, setImagePreview] = useState(null); // Pour prévisualiser l'image
   const [editingObjective, setEditingObjective] = useState('');
   const [editingProgramme, setEditingProgramme] = useState(''); // Pour le programme
   const [editingPrerequis, setEditingPrerequis] = useState('');
@@ -201,10 +203,17 @@ const TrainerDashboard = () => {
           endDate: convertToDateInput(training.endDate),
           status: training.status || 'A Venir',
           description: training.description || '',
+          imageUrl: training.imageUrl || '',
           objectifs: objectifsArray,
           programme: programmeList,
           prerequis: prerequisArray
         });
+        // Charger l'image pour la prévisualisation
+        if (training.imageUrl) {
+          setImagePreview(training.imageUrl);
+        } else {
+          setImagePreview(null);
+        }
         // Réinitialiser les champs d'édition
         setEditingProgramme('');
         setShowEditModal(true);
@@ -227,6 +236,7 @@ const TrainerDashboard = () => {
       endDate: '',
       status: 'A Venir',
       description: '', // Description vide pour commencer
+      imageUrl: '',
       objectifs: [], // Liste vide pour commencer
       programme: [], // Liste vide pour commencer
       prerequis: [] // Liste vide pour commencer
@@ -235,6 +245,7 @@ const TrainerDashboard = () => {
     setEditingObjective('');
     setEditingProgramme('');
     setEditingPrerequis('');
+    setImagePreview(null);
     setTrainingData({ trainerId: user.id, trainerName: `${user.prenom || ''} ${user.nom || ''}`.trim(), trainerEmail: user.email });
     setShowCreateModal(true);
   };
@@ -405,6 +416,7 @@ const TrainerDashboard = () => {
         status: fullTrainingFormData.status || 'A Venir',
         // Description et contenu pédagogique - CRUCIAL : s'assurer que ces champs sont bien inclus
         description: fullTrainingFormData.description || '',
+        imageUrl: fullTrainingFormData.imageUrl || '',
         objectifs: objectifsArray,
         // Convertir la liste programme en String (jointure avec \n) pour le backend
         programme: programmeArray.length > 0 
@@ -492,6 +504,7 @@ const TrainerDashboard = () => {
       setEditingObjective('');
       setEditingProgramme('');
       setEditingPrerequis('');
+      setImagePreview(null);
       
       // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
@@ -1112,6 +1125,117 @@ const TrainerDashboard = () => {
                   rows={4}
                 />
                 <p className="trainer-form-hint">Description générale de la formation (visible dans le catalogue)</p>
+              </div>
+
+              {/* Image d'aperçu */}
+              <div className="trainer-form-group">
+                <label className="trainer-form-label">Image d'aperçu de la formation</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {/* Prévisualisation de l'image */}
+                  {(imagePreview || fullTrainingFormData.imageUrl) && (
+                    <div style={{ 
+                      width: '100%', 
+                      maxWidth: '400px', 
+                      height: '250px', 
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      border: '2px solid #e0e0e0',
+                      backgroundColor: '#f5f5f5'
+                    }}>
+                      <img 
+                        src={imagePreview || fullTrainingFormData.imageUrl} 
+                        alt="Aperçu" 
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover' 
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Option 1: Upload de fichier */}
+                  <div>
+                    <label 
+                      htmlFor="image-upload" 
+                      className="trainer-btn trainer-btn-secondary"
+                      style={{ 
+                        display: 'inline-block', 
+                        cursor: 'pointer',
+                        padding: '10px 20px',
+                        textAlign: 'center'
+                      }}
+                    >
+                      📁 {fullTrainingFormData.imageUrl ? 'Modifier l\'image' : 'Choisir une image'}
+                    </label>
+                    <input
+                      id="image-upload"
+                      type="file"
+                      accept="image/*"
+                      style={{ display: 'none' }}
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          // Vérifier la taille du fichier (max 5MB)
+                          if (file.size > 5 * 1024 * 1024) {
+                            setToast({ message: 'L\'image est trop volumineuse (max 5MB)', type: 'error' });
+                            return;
+                          }
+                          
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            const base64String = reader.result;
+                            setFullTrainingFormData(prev => ({ ...prev, imageUrl: base64String }));
+                            setImagePreview(base64String);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {/* Option 2: Saisir une URL */}
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <span style={{ color: '#666', fontSize: '14px' }}>OU</span>
+                  </div>
+                  
+                  <input
+                    type="text"
+                    value={fullTrainingFormData.imageUrl && !fullTrainingFormData.imageUrl.startsWith('data:') 
+                      ? fullTrainingFormData.imageUrl 
+                      : ''}
+                    onChange={(e) => {
+                      const url = e.target.value;
+                      setFullTrainingFormData(prev => ({ ...prev, imageUrl: url }));
+                      if (url && !url.startsWith('data:')) {
+                        setImagePreview(url);
+                      }
+                    }}
+                    className="trainer-input"
+                    placeholder="Coller une URL d'image (ex: https://example.com/image.jpg)"
+                  />
+
+                  {/* Bouton pour supprimer l'image */}
+                  {(imagePreview || fullTrainingFormData.imageUrl) && (
+                    <button
+                      type="button"
+                      className="trainer-btn"
+                      style={{ 
+                        backgroundColor: '#dc3545', 
+                        color: 'white',
+                        maxWidth: '200px'
+                      }}
+                      onClick={() => {
+                        setFullTrainingFormData(prev => ({ ...prev, imageUrl: '' }));
+                        setImagePreview(null);
+                      }}
+                    >
+                      <X size={16} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                      Supprimer l'image
+                    </button>
+                  )}
+                </div>
+                <p className="trainer-form-hint">Ajoutez une image d'aperçu pour votre formation. Vous pouvez uploader un fichier (max 5MB) ou saisir une URL d'image.</p>
               </div>
 
               {/* 1. OBJECTIFS */}

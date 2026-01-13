@@ -16,7 +16,7 @@ public class User {
     private String entreprise;
     private String poste;
     private String role; // "USER", "TRAINER", "ADMIN"
-    
+
     // Champs pour la gestion de la rentabilité (formateurs)
     private String typeContrat; // "Freelance", "CDD", "Vacataire"
     private Double tarif; // Tarif horaire ou journalier en euros

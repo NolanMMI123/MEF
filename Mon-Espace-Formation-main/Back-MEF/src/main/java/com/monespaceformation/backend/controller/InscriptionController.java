@@ -46,8 +46,8 @@ public class InscriptionController {
                 return ResponseEntity.badRequest().body("L'ID de session est requis");
             }
             
-            // On vérifie si l'utilisateur n'est pas déjà inscrit
-            if (inscriptionRepository.existsByUserIdAndSessionId(inscription.getUserId(), inscription.getSessionId())) {
+        // On vérifie si l'utilisateur n'est pas déjà inscrit
+        if (inscriptionRepository.existsByUserIdAndSessionId(inscription.getUserId(), inscription.getSessionId())) {
                 return ResponseEntity.badRequest().body("Vous êtes déjà inscrit à cette session !");
             }
             
@@ -60,48 +60,48 @@ public class InscriptionController {
             // Initialiser la date d'inscription si elle n'est pas définie
             if (inscription.getDateInscription() == null) {
                 inscription.setDateInscription(java.time.LocalDate.now());
-            }
-            
+        }
+        
             // Sauvegarder l'inscription
-            Inscription saved = inscriptionRepository.save(inscription);
+        Inscription saved = inscriptionRepository.save(inscription);
+        
+        // Créer une notification pour l'admin
+        try {
+            String userName = "N/A";
+            String trainingTitle = "N/A";
             
-            // Créer une notification pour l'admin
-            try {
-                String userName = "N/A";
-                String trainingTitle = "N/A";
-                
-                // Récupérer le nom de l'utilisateur
-                Optional<User> userOpt = userRepository.findById(inscription.getUserId());
-                if (userOpt.isPresent()) {
-                    User user = userOpt.get();
-                    userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
-                              (user.getNom() != null ? user.getNom() : "");
-                    userName = userName.trim();
-                    if (userName.isEmpty() && inscription.getParticipant() != null) {
-                        userName = (inscription.getParticipant().getPrenom() != null ? inscription.getParticipant().getPrenom() : "") + " " +
-                                  (inscription.getParticipant().getNom() != null ? inscription.getParticipant().getNom() : "");
-                        userName = userName.trim();
-                    }
-                } else if (inscription.getParticipant() != null) {
+            // Récupérer le nom de l'utilisateur
+            Optional<User> userOpt = userRepository.findById(inscription.getUserId());
+            if (userOpt.isPresent()) {
+                User user = userOpt.get();
+                userName = (user.getPrenom() != null ? user.getPrenom() : "") + " " + 
+                          (user.getNom() != null ? user.getNom() : "");
+                userName = userName.trim();
+                if (userName.isEmpty() && inscription.getParticipant() != null) {
                     userName = (inscription.getParticipant().getPrenom() != null ? inscription.getParticipant().getPrenom() : "") + " " +
                               (inscription.getParticipant().getNom() != null ? inscription.getParticipant().getNom() : "");
                     userName = userName.trim();
                 }
-                
-                // Récupérer le titre de la formation
+            } else if (inscription.getParticipant() != null) {
+                userName = (inscription.getParticipant().getPrenom() != null ? inscription.getParticipant().getPrenom() : "") + " " +
+                          (inscription.getParticipant().getNom() != null ? inscription.getParticipant().getNom() : "");
+                userName = userName.trim();
+            }
+            
+            // Récupérer le titre de la formation
                 SessionFormation session = sessionOpt.get();
                 if (session.getTitle() != null) {
                     trainingTitle = session.getTitle();
-                }
-                
-                // Créer la notification
-                Notification notification = new Notification(
-                    "Nouvel inscrit : " + userName + " à la formation " + trainingTitle,
-                    "INFO"
-                );
-                notificationRepository.save(notification);
-            } catch (Exception e) {
-                // Ne pas faire échouer l'inscription si la notification échoue
+            }
+            
+            // Créer la notification
+            Notification notification = new Notification(
+                "Nouvel inscrit : " + userName + " à la formation " + trainingTitle,
+                "INFO"
+            );
+            notificationRepository.save(notification);
+        } catch (Exception e) {
+            // Ne pas faire échouer l'inscription si la notification échoue
                 System.err.println("Erreur lors de la création de la notification: " + e.getMessage());
                 e.printStackTrace();
             }

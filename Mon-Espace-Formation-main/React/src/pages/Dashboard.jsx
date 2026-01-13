@@ -72,16 +72,16 @@ const TrainingCard = ({ training, progressWidth }) => {
                     </div>
 
                     {training.trainerName && (
-                        <div className="trainer-box mt-3">
+                    <div className="trainer-box mt-3">
                             <div className="trainer-avatar">
                                 {training.trainerName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                             </div>
-                            <div className="flex-grow-1">
-                                <div className="trainer-label">Votre formateur</div>
+                        <div className="flex-grow-1">
+                            <div className="trainer-label">Votre formateur</div>
                                 <h5 className="trainer-name">{training.trainerName}</h5>
-                                <div className="trainer-role">Formateur Certifié</div>
+                            <div className="trainer-role">Formateur Certifié</div>
                                 {training.trainerEmail && (
-                                    <div className="trainer-email">
+                            <div className="trainer-email">
                                         <Mail size={14}/> {training.trainerEmail}
                                     </div>
                                 )}

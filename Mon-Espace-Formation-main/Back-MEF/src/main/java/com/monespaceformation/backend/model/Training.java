@@ -36,6 +36,9 @@ public class Training {
     private List<String> prerequis;    // Liste des prérequis
     private String programme;           // Programme détaillé de la formation
 
+    // Image d'aperçu de la formation
+    private String imageUrl;           // URL ou base64 de l'image d'aperçu
+
     // Liste des documents (simulés pour l'instant)
     private List<TrainingDocument> documents;
 }

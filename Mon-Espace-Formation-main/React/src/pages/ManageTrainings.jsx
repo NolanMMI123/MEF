@@ -261,10 +261,10 @@ const ManageTrainings = () => {
                     <span className="training-detail-label">Prix:</span>
                     <span className="training-detail-value price">{formatPrice(training.price)}</span>
                   </div>
-                  <div className="training-detail-item">
-                    <span className="training-detail-label">Formateur:</span>
+                    <div className="training-detail-item">
+                      <span className="training-detail-label">Formateur:</span>
                     <span className="training-detail-value">{training.trainerName || 'Non assigné'}</span>
-                  </div>
+                    </div>
                 </div>
                 <div className="training-actions">
                   <button 
