@@ -61,6 +61,8 @@ public class TrainerDashboardDTO {
         private String userEmail;
         private String inscriptionDate;
         private String status;
+        private Double note;
+        private String inscriptionId; // ID de l'inscription pour pouvoir la mettre à jour
 
         public InscritInfo() {}
 
@@ -70,6 +72,16 @@ public class TrainerDashboardDTO {
             this.userEmail = userEmail;
             this.inscriptionDate = inscriptionDate;
             this.status = status;
+        }
+
+        public InscritInfo(String userId, String userName, String userEmail, String inscriptionDate, String status, Double note, String inscriptionId) {
+            this.userId = userId;
+            this.userName = userName;
+            this.userEmail = userEmail;
+            this.inscriptionDate = inscriptionDate;
+            this.status = status;
+            this.note = note;
+            this.inscriptionId = inscriptionId;
         }
 
         public String getUserId() { return userId; }
@@ -86,6 +98,12 @@ public class TrainerDashboardDTO {
 
         public String getStatus() { return status; }
         public void setStatus(String status) { this.status = status; }
+
+        public Double getNote() { return note; }
+        public void setNote(Double note) { this.note = note; }
+
+        public String getInscriptionId() { return inscriptionId; }
+        public void setInscriptionId(String inscriptionId) { this.inscriptionId = inscriptionId; }
     }
 
     /**

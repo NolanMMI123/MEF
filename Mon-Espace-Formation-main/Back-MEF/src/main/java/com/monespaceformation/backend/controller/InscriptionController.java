@@ -208,6 +208,16 @@ public class InscriptionController {
             if (inscriptionUpdate.getStatus() != null) {
                 inscription.setStatus(inscriptionUpdate.getStatus());
             }
+            
+            // Mettre à jour la note si fournie
+            if (inscriptionUpdate.getNote() != null) {
+                // Valider que la note est entre 0 et 20
+                Double noteValue = inscriptionUpdate.getNote();
+                if (noteValue < 0 || noteValue > 20) {
+                    return ResponseEntity.badRequest().build();
+                }
+                inscription.setNote(noteValue);
+            }
 
             Inscription saved = inscriptionRepository.save(inscription);
             return ResponseEntity.ok(saved);
@@ -217,11 +227,66 @@ public class InscriptionController {
         }
     }
 
+    // 6. ATTRIBUER UNE NOTE À UN ÉLÈVE (PUT)
+    @PutMapping("/{id}/note")
+    public ResponseEntity<?> updateNote(@PathVariable String id, @RequestBody java.util.Map<String, Object> requestBody) {
+        try {
+            if (id == null) {
+                return ResponseEntity.badRequest().body("L'ID de l'inscription est requis");
+            }
+            
+            Optional<Inscription> inscriptionOpt = inscriptionRepository.findById(id);
+            if (inscriptionOpt.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Inscription inscription = inscriptionOpt.get();
+            
+            // Récupérer la note depuis le body
+            Object noteObj = requestBody.get("note");
+            if (noteObj == null) {
+                return ResponseEntity.badRequest().body("La note est requise");
+            }
+            
+            Double note;
+            try {
+                if (noteObj instanceof Number) {
+                    note = ((Number) noteObj).doubleValue();
+                } else if (noteObj instanceof String) {
+                    String noteStr = (String) noteObj;
+                    if (noteStr.trim().isEmpty()) {
+                        // Permettre de supprimer la note en envoyant une chaîne vide
+                        inscription.setNote(null);
+                        Inscription saved = inscriptionRepository.save(inscription);
+                        return ResponseEntity.ok(saved);
+                    }
+                    note = Double.parseDouble(noteStr);
+                } else {
+                    return ResponseEntity.badRequest().body("Format de note invalide");
+                }
+            } catch (NumberFormatException e) {
+                return ResponseEntity.badRequest().body("La note doit être un nombre");
+            }
+            
+            // Valider que la note est entre 0 et 20
+            if (note < 0 || note > 20) {
+                return ResponseEntity.badRequest().body("La note doit être comprise entre 0 et 20");
+            }
+            
+            inscription.setNote(note);
+            Inscription saved = inscriptionRepository.save(inscription);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Erreur lors de la mise à jour de la note: " + e.getMessage());
+        }
+    }
+
     // 5. SUPPRIMER UNE INSCRIPTION (DELETE)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteInscription(@PathVariable String id) {
         try {
-            if (!inscriptionRepository.existsById(id)) {
+            if (id == null || !inscriptionRepository.existsById(id)) {
                 return ResponseEntity.notFound().build();
             }
 

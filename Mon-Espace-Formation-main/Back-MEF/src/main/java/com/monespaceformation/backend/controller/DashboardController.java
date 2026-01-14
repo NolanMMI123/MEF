@@ -192,14 +192,16 @@ public class DashboardController {
                         userName = userEmail != null && !userEmail.equals("N/A") ? userEmail : "Participant inconnu";
                     }
                     
-                    // Créer l'info d'inscrit
+                    // Créer l'info d'inscrit avec la note et l'ID de l'inscription
                     TrainerDashboardDTO.InscritInfo inscritInfo = new TrainerDashboardDTO.InscritInfo(
                         userId != null ? userId : inscription.getId(),
                         userName,
                         userEmail,
                         inscription.getDateInscription() != null ? 
                             inscription.getDateInscription().toString() : "N/A",
-                        inscription.getStatus() != null ? inscription.getStatus() : "N/A"
+                        inscription.getStatus() != null ? inscription.getStatus() : "N/A",
+                        inscription.getNote(), // Note attribuée par le formateur
+                        inscription.getId() // ID de l'inscription pour pouvoir la mettre à jour
                     );
                     inscrits.add(inscritInfo);
                     totalEleves++;

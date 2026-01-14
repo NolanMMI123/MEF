@@ -19,6 +19,7 @@ public class Inscription {
     // Champs métier (Le formulaire)
     private Double amount;      // Le prix payé (2490)
     private Participant participant; // L'objet complexe avec adresse, nom, etc.
+    private Double note;       // Note attribuée par le formateur (sur 20)
 
     public Inscription() {
         this.dateInscription = LocalDate.now();
@@ -48,4 +49,7 @@ public class Inscription {
 
     public Participant getParticipant() { return participant; }
     public void setParticipant(Participant participant) { this.participant = participant; }
+
+    public Double getNote() { return note; }
+    public void setNote(Double note) { this.note = note; }
 }

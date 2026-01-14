@@ -2,10 +2,124 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
   Users, Clock, BookOpen, Eye, X, Edit, Plus, Trash2,
-  ArrowLeft, User as UserIcon, Save, Calendar
+  ArrowLeft, User as UserIcon, Save, Calendar, Star
 } from 'lucide-react';
 import Toast from '../components/Toast';
 import './TrainerDashboard.css';
+
+/**
+ * Composant pour afficher un inscrit avec possibilité d'attribuer une note
+ */
+const InscritItem = ({ inscrit, onNoteUpdate }) => {
+  const [note, setNote] = useState(inscrit.note != null ? inscrit.note.toString() : '');
+  const [isEditing, setIsEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  // Mettre à jour la note quand l'inscrit change
+  useEffect(() => {
+    setNote(inscrit.note != null ? inscrit.note.toString() : '');
+  }, [inscrit.note]);
+
+  const handleSaveNote = async () => {
+    if (note !== '' && (parseFloat(note) < 0 || parseFloat(note) > 20)) {
+      return; // Validation côté client
+    }
+    
+    setSaving(true);
+    try {
+      await onNoteUpdate(inscrit.inscriptionId, note);
+      setIsEditing(false);
+    } catch (err) {
+      console.error('Erreur:', err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setNote(inscrit.note != null ? inscrit.note.toString() : '');
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="trainer-inscrit-item">
+      <div className="trainer-inscrit-icon">
+        <UserIcon size={20} />
+      </div>
+      <div className="trainer-inscrit-info">
+        <div className="trainer-inscrit-name">{inscrit.userName}</div>
+        <div className="trainer-inscrit-email">{inscrit.userEmail}</div>
+        <div className="trainer-inscrit-date">
+          Inscrit le: {inscrit.inscriptionDate || 'N/A'}
+        </div>
+      </div>
+      <div className="trainer-inscrit-note-section">
+        {isEditing ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="number"
+              min="0"
+              max="20"
+              step="0.5"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              className="trainer-note-input"
+              placeholder="Note /20"
+              style={{
+                width: '80px',
+                padding: '6px 8px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}
+            />
+            <button
+              onClick={handleSaveNote}
+              disabled={saving || (note !== '' && (parseFloat(note) < 0 || parseFloat(note) > 20))}
+              className="trainer-btn trainer-btn-primary"
+              style={{ padding: '6px 12px', fontSize: '12px' }}
+            >
+              {saving ? '...' : <Save size={14} />}
+            </button>
+            <button
+              onClick={handleCancel}
+              className="trainer-btn trainer-btn-secondary"
+              style={{ padding: '6px 12px', fontSize: '12px' }}
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {inscrit.note != null ? (
+              <span className="trainer-note-display" style={{
+                fontWeight: 'bold',
+                color: inscrit.note >= 10 ? '#28a745' : '#dc3545',
+                fontSize: '16px'
+              }}>
+                <Star size={16} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                {inscrit.note.toFixed(1)}/20
+              </span>
+            ) : (
+              <span style={{ color: '#999', fontSize: '14px' }}>Pas de note</span>
+            )}
+            <button
+              onClick={() => setIsEditing(true)}
+              className="trainer-btn trainer-btn-secondary"
+              style={{ padding: '6px 12px', fontSize: '12px' }}
+              title="Modifier la note"
+            >
+              <Edit size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+      <span className={`trainer-inscrit-status ${inscrit.status === 'VALIDÉ' ? 'validated' : ''}`}>
+        {inscrit.status || 'N/A'}
+      </span>
+    </div>
+  );
+};
 
 /**
  * Dashboard du formateur
@@ -991,21 +1105,46 @@ const TrainerDashboard = () => {
               {selectedFormation.inscrits && selectedFormation.inscrits.length > 0 ? (
                 <div className="trainer-inscrits-list">
                   {selectedFormation.inscrits.map((inscrit, index) => (
-                    <div key={index} className="trainer-inscrit-item">
-                      <div className="trainer-inscrit-icon">
-                        <UserIcon size={20} />
-                      </div>
-                      <div className="trainer-inscrit-info">
-                        <div className="trainer-inscrit-name">{inscrit.userName}</div>
-                        <div className="trainer-inscrit-email">{inscrit.userEmail}</div>
-                        <div className="trainer-inscrit-date">
-                          Inscrit le: {inscrit.inscriptionDate || 'N/A'}
-                        </div>
-                      </div>
-                      <span className={`trainer-inscrit-status ${inscrit.status === 'VALIDÉ' ? 'validated' : ''}`}>
-                        {inscrit.status || 'N/A'}
-                      </span>
-                    </div>
+                    <InscritItem 
+                      key={inscrit.inscriptionId || index} 
+                      inscrit={inscrit}
+                      onNoteUpdate={async (inscriptionId, note) => {
+                        try {
+                          const response = await fetch(`/api/inscriptions/${inscriptionId}/note`, {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ note: note !== '' ? parseFloat(note) : null })
+                          });
+
+                          if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(errorText || 'Erreur lors de la mise à jour de la note');
+                          }
+
+                          setToast({ message: 'Note mise à jour avec succès !', type: 'success' });
+                          
+                          // Recharger les données du dashboard
+                          const userEmail = localStorage.getItem('userEmail');
+                          const dashboardResponse = await fetch(`/api/dashboard/trainer/${userEmail}`);
+                          if (dashboardResponse.ok) {
+                            const data = await dashboardResponse.json();
+                            setDashboardData(data);
+                            // Mettre à jour la formation sélectionnée
+                            const updatedFormation = data.formations.find(f => 
+                              f.training.id === selectedFormation.training.id
+                            );
+                            if (updatedFormation) {
+                              setSelectedFormation(updatedFormation);
+                            }
+                          }
+                        } catch (err) {
+                          console.error('Erreur:', err);
+                          setToast({ message: err.message || 'Erreur lors de la mise à jour de la note', type: 'error' });
+                        }
+                      }}
+                    />
                   ))}
                 </div>
               ) : (
