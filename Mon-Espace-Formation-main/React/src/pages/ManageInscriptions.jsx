@@ -23,7 +23,7 @@ const ManageInscriptions = () => {
 
   const fetchInscriptions = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/inscriptions');
+      const response = await fetch('/api/inscriptions');
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des inscriptions');
       }
@@ -100,7 +100,7 @@ const ManageInscriptions = () => {
   // Valider une inscription (mettre le statut à "CONFIRMED" ou "VALIDÉ")
   const handleValidate = async (id) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/inscriptions/${id}`, {
+      const response = await fetch(`/api/inscriptions/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -128,7 +128,7 @@ const ManageInscriptions = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/inscriptions/${id}`, {
+      const response = await fetch(`/api/inscriptions/${id}`, {
         method: 'DELETE'
       });
 

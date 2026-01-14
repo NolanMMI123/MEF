@@ -41,7 +41,7 @@ const AdminAttestations = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:8080/api/attestations');
+      const response = await fetch('/api/attestations');
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des attestations');
       }

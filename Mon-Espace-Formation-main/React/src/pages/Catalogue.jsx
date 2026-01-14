@@ -27,7 +27,7 @@ const Catalogue = () => {
         const fetchFormations = async () => {
             try {
                 // 1. Récupérer TOUTES les sessions depuis le Back-end
-                const sessionsRes = await fetch('http://localhost:8080/api/sessions');
+                const sessionsRes = await fetch('/api/sessions');
                 
                 if (!sessionsRes.ok) throw new Error("Erreur API Sessions");
                 
@@ -44,7 +44,7 @@ const Catalogue = () => {
                     const userId = currentUser.id || currentUser._id || currentUser.userId;
 
                     if (userId) {
-                        const inscriptionsRes = await fetch(`http://localhost:8080/api/inscriptions/user/${userId}`);
+                        const inscriptionsRes = await fetch(`/api/inscriptions/user/${userId}`);
                         
                         if (inscriptionsRes.ok) {
                             const inscriptionsData = await inscriptionsRes.json();

@@ -283,7 +283,7 @@ const Dashboard = () => {
     }
 
     // Appel Back-end
-    fetch(`http://localhost:8080/api/dashboard/${userEmail}`)
+    fetch(`/api/dashboard/${userEmail}`)
       .then((res) => {
           if(!res.ok) throw new Error("Erreur serveur");
           return res.json();

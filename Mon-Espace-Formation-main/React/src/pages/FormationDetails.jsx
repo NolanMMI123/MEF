@@ -21,7 +21,7 @@ const FormationDetails = () => {
         const fetchDetails = async () => {
             try {
                 // 1. Tenter de récupérer depuis l'API Back-end (trainings au lieu de sessions)
-                const response = await fetch(`http://localhost:8080/api/trainings/${id}`);
+                const response = await fetch(`/api/trainings/${id}`);
                 
                 if (response.ok) {
                     const data = await response.json();
@@ -32,7 +32,7 @@ const FormationDetails = () => {
                     setCourse(data);
                 } else {
                     // Fallback : essayer avec sessions si trainings échoue
-                    const sessionResponse = await fetch(`http://localhost:8080/api/sessions/${id}`);
+                    const sessionResponse = await fetch(`/api/sessions/${id}`);
                     if (sessionResponse.ok) {
                         const sessionData = await sessionResponse.json();
                         console.log("Détails reçus depuis sessions :", sessionData);

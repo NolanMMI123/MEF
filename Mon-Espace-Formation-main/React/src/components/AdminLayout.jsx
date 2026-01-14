@@ -22,7 +22,7 @@ const AdminLayout = ({ children }) => {
   // Récupérer les notifications
   const fetchNotifications = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/notifications');
+      const response = await fetch('/api/notifications');
       if (response.ok) {
         const data = await response.json();
         setNotifications(data);
@@ -61,7 +61,7 @@ const AdminLayout = ({ children }) => {
   // Marquer toutes les notifications comme lues
   const handleMarkAllAsRead = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/notifications/mark-all-read', {
+      const response = await fetch('/api/notifications/mark-all-read', {
         method: 'PUT'
       });
       if (response.ok) {

@@ -36,7 +36,7 @@ const ManageSessions = () => {
 
   const fetchSessions = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/sessions');
+      const response = await fetch('/api/sessions');
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des sessions');
       }
@@ -52,7 +52,7 @@ const ManageSessions = () => {
 
   const fetchTrainings = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/trainings');
+      const response = await fetch('/api/trainings');
       if (response.ok) {
         const data = await response.json();
         setTrainings(data);
@@ -64,7 +64,7 @@ const ManageSessions = () => {
 
   const fetchTrainers = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/users?role=TRAINER');
+      const response = await fetch('/api/users?role=TRAINER');
       if (response.ok) {
         const data = await response.json();
         setTrainers(data);
@@ -158,8 +158,8 @@ const ManageSessions = () => {
     setSubmitting(true);
     try {
       const url = editingSessionId 
-        ? `http://localhost:8080/api/sessions/${editingSessionId}`
-        : 'http://localhost:8080/api/sessions';
+        ? `/api/sessions/${editingSessionId}`
+        : '/api/sessions';
       const method = editingSessionId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -203,7 +203,7 @@ const ManageSessions = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/sessions/${id}`, {
+      const response = await fetch(`/api/sessions/${id}`, {
         method: 'DELETE'
       });
 

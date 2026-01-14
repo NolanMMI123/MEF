@@ -38,13 +38,13 @@ const AdminDashboard = () => {
     const fetchData = async () => {
       try {
         // Récupérer les statistiques globales
-        const summaryRes = await fetch('http://localhost:8080/api/dashboard/summary');
+        const summaryRes = await fetch('/api/dashboard/summary');
         if (!summaryRes.ok) throw new Error('Erreur lors du chargement des statistiques');
         const summaryData = await summaryRes.json();
         setSummary(summaryData);
 
         // Récupérer les inscriptions récentes
-        const inscriptionsRes = await fetch('http://localhost:8080/api/inscriptions');
+        const inscriptionsRes = await fetch('/api/inscriptions');
         if (!inscriptionsRes.ok) throw new Error('Erreur lors du chargement des inscriptions');
         const inscriptionsData = await inscriptionsRes.json();
         // Trier par date et prendre les 4 plus récentes
@@ -54,7 +54,7 @@ const AdminDashboard = () => {
         setInscriptions(sorted);
 
         // Récupérer les sessions pour les catégories
-        const sessionsRes = await fetch('http://localhost:8080/api/sessions');
+        const sessionsRes = await fetch('/api/sessions');
         if (sessionsRes.ok) {
           const sessionsData = await sessionsRes.json();
           setSessions(sessionsData);
@@ -140,8 +140,8 @@ const AdminDashboard = () => {
     setSubmitting(true);
     try {
       const url = editingTrainingId 
-        ? `http://localhost:8080/api/trainings/${editingTrainingId}`
-        : 'http://localhost:8080/api/trainings';
+        ? `/api/trainings/${editingTrainingId}`
+        : '/api/trainings';
       const method = editingTrainingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {

@@ -32,7 +32,7 @@ const ManageTrainers = () => {
 
   const fetchTrainers = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/users?role=TRAINER');
+      const response = await fetch('/api/users?role=TRAINER');
       if (!response.ok) {
         throw new Error('Erreur lors du chargement des formateurs');
       }
@@ -53,7 +53,7 @@ const ManageTrainers = () => {
       if (trainer) {
         // Mode édition - récupérer les données complètes du formateur
         console.log('Mode édition pour le formateur:', trainer.id);
-        fetch(`http://localhost:8080/api/users/trainer/${trainer.id}`)
+        fetch(`/api/users/trainer/${trainer.id}`)
           .then(res => {
             if (!res.ok) throw new Error('Erreur lors du chargement');
             return res.json();
@@ -145,8 +145,8 @@ const ManageTrainers = () => {
     setSubmitting(true);
     try {
       const url = editingTrainerId 
-        ? `http://localhost:8080/api/users/trainer/${editingTrainerId}`
-        : 'http://localhost:8080/api/users/trainer';
+        ? `/api/users/trainer/${editingTrainerId}`
+        : '/api/users/trainer';
       
       const method = editingTrainerId ? 'PUT' : 'POST';
       

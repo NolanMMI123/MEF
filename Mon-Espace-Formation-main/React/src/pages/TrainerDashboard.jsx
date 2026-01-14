@@ -72,7 +72,7 @@ const TrainerDashboard = () => {
 
         if (id) {
           // Mode édition : charger les données de la formation
-          const response = await fetch(`http://localhost:8080/api/trainings/${id}`);
+          const response = await fetch(`/api/trainings/${id}`);
           if (!response.ok) {
             throw new Error('Erreur lors du chargement de la formation');
           }
@@ -93,7 +93,7 @@ const TrainerDashboard = () => {
           });
         } else {
           // Mode dashboard : charger les données du dashboard
-          const response = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
+          const response = await fetch(`/api/dashboard/trainer/${userEmail}`);
           if (!response.ok) {
             throw new Error('Erreur lors du chargement des données');
           }
@@ -142,7 +142,7 @@ const TrainerDashboard = () => {
 
   const handleEditFormation = (formationId) => {
     // Charger les données de la formation pour l'édition complète
-    fetch(`http://localhost:8080/api/trainings/${formationId}`)
+    fetch(`/api/trainings/${formationId}`)
       .then(res => {
         if (!res.ok) throw new Error('Erreur lors du chargement');
         return res.json();
@@ -257,7 +257,7 @@ const TrainerDashboard = () => {
 
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const response = await fetch(`http://localhost:8080/api/trainings/${formationId}`, {
+      const response = await fetch(`/api/trainings/${formationId}`, {
         method: 'DELETE',
         headers: {
           'X-Trainer-Id': user.id
@@ -275,7 +275,7 @@ const TrainerDashboard = () => {
       setToast({ message: 'Formation supprimée avec succès !', type: 'success' });
       // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
-      const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
+      const dashboardResponse = await fetch(`/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
         setDashboardData(data);
@@ -338,7 +338,7 @@ const TrainerDashboard = () => {
         price: sessionFormData.price ? parseFloat(sessionFormData.price) : null
       };
 
-      const response = await fetch('http://localhost:8080/api/sessions', {
+      const response = await fetch('/api/sessions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -356,7 +356,7 @@ const TrainerDashboard = () => {
       
       // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
-      const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
+      const dashboardResponse = await fetch(`/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
         setDashboardData(data);
@@ -439,8 +439,8 @@ const TrainerDashboard = () => {
       console.log('🖼️ ImageUrl envoyée:', trainingDataToSend.imageUrl ? (trainingDataToSend.imageUrl.substring(0, 50) + '...') : 'vide');
 
       const url = trainingData?.id 
-        ? `http://localhost:8080/api/trainings/${trainingData.id}`
-        : 'http://localhost:8080/api/trainings';
+        ? `/api/trainings/${trainingData.id}`
+        : '/api/trainings';
       
       const method = trainingData?.id ? 'PUT' : 'POST';
 
@@ -512,7 +512,7 @@ const TrainerDashboard = () => {
       
       // Recharger les données
       const userEmail = localStorage.getItem('userEmail');
-      const dashboardResponse = await fetch(`http://localhost:8080/api/dashboard/trainer/${userEmail}`);
+      const dashboardResponse = await fetch(`/api/dashboard/trainer/${userEmail}`);
       if (dashboardResponse.ok) {
         const data = await dashboardResponse.json();
         console.log('✅ Dashboard rechargé après sauvegarde');
@@ -577,7 +577,7 @@ const TrainerDashboard = () => {
     setSubmitting(true);
     try {
       const user = JSON.parse(localStorage.getItem('user') || '{}');
-      const response = await fetch(`http://localhost:8080/api/trainings/${id}/pedagogical-content`, {
+      const response = await fetch(`/api/trainings/${id}/pedagogical-content`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
