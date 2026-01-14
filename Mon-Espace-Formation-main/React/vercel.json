@@ -1,0 +1,9 @@
+{
+    "rewrites": [
+      {
+        "source": "/api/(.*)",
+        "destination": "https://mon-espace-formation-spring-production.up.railway.app/api/$1"
+      }
+    ]
+  }
+  
